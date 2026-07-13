@@ -1,6 +1,7 @@
 package com.equipment.management.controller;
 
 import com.equipment.management.annotation.RequireAuth;
+import com.equipment.management.annotation.RequirePermission;
 import com.equipment.management.common.result.Result;
 import com.equipment.management.dto.request.DeviceQuery;
 import com.equipment.management.dto.response.ExcelImportResponse;
@@ -22,16 +23,19 @@ public class ExcelController {
 
     private final ExcelService excelService;
 
+    @RequirePermission("device:import")
     @PostMapping("/import")
     public Result<ExcelImportResponse> importDevices(@RequestParam("file") MultipartFile file) {
         return Result.success(excelService.importDevices(file));
     }
 
+    @RequirePermission("device:export")
     @GetMapping("/export")
     public void exportDevices(DeviceQuery query, HttpServletResponse response) {
         excelService.exportDevices(query, response);
     }
 
+    @RequirePermission("device:export")
     @GetMapping("/template")
     public void downloadTemplate(HttpServletResponse response) {
         excelService.downloadTemplate(response);

@@ -1,6 +1,7 @@
 package com.equipment.management.controller;
 
 import com.equipment.management.annotation.RequireAuth;
+import com.equipment.management.annotation.RequirePermission;
 import com.equipment.management.common.result.Result;
 import com.equipment.management.service.StatisticsService;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,7 @@ import java.util.Map;
 
 @RestController
 @RequireAuth
+@RequirePermission("statistics:view")
 @RequestMapping("/api/statistics")
 @RequiredArgsConstructor
 public class StatisticsController {

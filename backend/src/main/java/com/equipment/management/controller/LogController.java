@@ -1,6 +1,7 @@
 package com.equipment.management.controller;
 
 import com.equipment.management.annotation.RequireAuth;
+import com.equipment.management.annotation.RequirePermission;
 import com.equipment.management.common.result.PageResult;
 import com.equipment.management.common.result.Result;
 import com.equipment.management.dto.request.LogQuery;
@@ -16,6 +17,7 @@ import java.util.Map;
 
 @RestController
 @RequireAuth
+@RequirePermission("log:view")
 @RequestMapping("/api/log")
 @RequiredArgsConstructor
 public class LogController {

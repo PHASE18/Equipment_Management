@@ -12,12 +12,17 @@ import org.springframework.util.StringUtils;
  */
 public final class PageUtils {
 
+    private static final String SORT_FIELD_PATTERN = "^[A-Za-z][A-Za-z0-9]*$";
+
     private PageUtils() {
     }
 
     public static <T> Page<T> buildPage(PageQuery query) {
         Page<T> page = new Page<>(query.getPageNum(), query.getPageSize());
         if (StringUtils.hasText(query.getSortField())) {
+            if (!query.getSortField().matches(SORT_FIELD_PATTERN)) {
+                return page;
+            }
             if ("asc".equalsIgnoreCase(query.getSortOrder())) {
                 page.addOrder(OrderItem.asc(camelToUnderline(query.getSortField())));
             } else {

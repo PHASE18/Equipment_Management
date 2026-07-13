@@ -1,78 +1,162 @@
 package com.equipment.management.service.impl;
 
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.equipment.management.common.constant.ErrorCode;
 import com.equipment.management.common.context.UserContext;
+import com.equipment.management.common.enums.FileCategory;
 import com.equipment.management.common.exception.BusinessException;
+import com.equipment.management.common.util.FileUploadValidator;
+import com.equipment.management.common.util.MinioUtils;
 import com.equipment.management.dto.response.FileUploadResponse;
+import com.equipment.management.entity.Device;
 import com.equipment.management.entity.DeviceAttachment;
+import com.equipment.management.mapper.DeviceAttachmentMapper;
+import com.equipment.management.mapper.DeviceMapper;
 import com.equipment.management.service.FileService;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Arrays;
-import java.util.Collections;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Locale;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class FileServiceImpl implements FileService {
 
-    @Value("${file.upload.allowed-extensions}")
-    private String allowedExtensions;
-
-    @Value("${file.upload.max-size}")
-    private long maxSize;
+    private final MinioUtils minioUtils;
+    private final FileUploadValidator fileUploadValidator;
+    private final DeviceMapper deviceMapper;
+    private final DeviceAttachmentMapper deviceAttachmentMapper;
 
     @Override
-    public FileUploadResponse upload(MultipartFile file, Long deviceId, String fileTypeCode) {
-        validateFile(file);
-        // TODO: 上传至 MinIO，写入 device_attachment 元数据
-        log.info("用户 {} 上传附件 deviceId={}, fileType={}", UserContext.getUsername(), deviceId, fileTypeCode);
-        return FileUploadResponse.builder()
-                .fileId(0L)
-                .url("")
-                .fileName(file.getOriginalFilename())
-                .fileSize(file.getSize())
-                .build();
+    @Transactional(rollbackFor = Exception.class)
+    public FileUploadResponse upload(MultipartFile file, Long deviceId, String category, String fileTypeCode) {
+        if (deviceId == null) {
+            throw new BusinessException(ErrorCode.BAD_REQUEST, "设备ID不能为空");
+        }
+        Device device = deviceMapper.selectById(deviceId);
+        if (device == null) {
+            throw new BusinessException(ErrorCode.DEVICE_NOT_FOUND);
+        }
+
+        FileCategory fileCategory = FileCategory.fromCode(category);
+        fileUploadValidator.validate(file, fileCategory);
+
+        String resolvedTypeCode = StringUtils.hasText(fileTypeCode)
+                ? fileTypeCode
+                : fileCategory.getDefaultFileTypeCode();
+        String directory = fileCategory.getCode() + "/device/" + deviceId;
+        String objectName = minioUtils.upload(file, directory);
+
+        DeviceAttachment attachment = new DeviceAttachment();
+        attachment.setDeviceId(deviceId);
+        attachment.setFileName(file.getOriginalFilename());
+        attachment.setFileTypeCode(resolvedTypeCode);
+        attachment.setFileSize(file.getSize());
+        attachment.setFilePath(objectName);
+        attachment.setUploadUserId(UserContext.getUserId());
+        attachment.setUploadTime(LocalDateTime.now());
+        deviceAttachmentMapper.insert(attachment);
+
+        log.info("用户 {} 上传附件 deviceId={}, category={}, path={}",
+                UserContext.getUsername(), deviceId, fileCategory.getCode(), objectName);
+        return toResponse(attachment, fileCategory.getCode());
     }
 
     @Override
     public void download(Long id, HttpServletResponse response) {
-        // TODO: 从 MinIO 读取文件流写入 response
-        throw new BusinessException(ErrorCode.ATTACHMENT_NOT_FOUND);
+        DeviceAttachment attachment = getAttachmentOrThrow(id);
+        try (InputStream inputStream = minioUtils.download(attachment.getFilePath());
+             OutputStream outputStream = response.getOutputStream()) {
+            String contentType = resolveContentType(attachment.getFileName());
+            String encodedName = URLEncoder.encode(attachment.getFileName(), StandardCharsets.UTF_8)
+                    .replace("+", "%20");
+            response.setContentType(contentType);
+            response.setHeader("Content-Disposition", "attachment; filename*=UTF-8''" + encodedName);
+            if (attachment.getFileSize() != null) {
+                response.setContentLengthLong(attachment.getFileSize());
+            }
+            inputStream.transferTo(outputStream);
+            outputStream.flush();
+        } catch (BusinessException ex) {
+            throw ex;
+        } catch (Exception ex) {
+            throw new BusinessException(ErrorCode.INTERNAL_ERROR, "文件下载失败");
+        }
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void delete(Long id) {
-        // TODO: 逻辑删除附件记录，可选删除 MinIO 对象
+        DeviceAttachment attachment = getAttachmentOrThrow(id);
+        deviceAttachmentMapper.deleteById(id);
+        try {
+            minioUtils.delete(attachment.getFilePath());
+        } catch (BusinessException ex) {
+            log.warn("删除 MinIO 对象失败, path={}", attachment.getFilePath(), ex);
+        }
     }
 
     @Override
-    public List<DeviceAttachment> listByDeviceId(Long deviceId) {
-        // TODO: 查询设备附件列表
-        return Collections.emptyList();
+    public List<FileUploadResponse> listByDeviceId(Long deviceId) {
+        if (deviceId == null) {
+            throw new BusinessException(ErrorCode.BAD_REQUEST, "设备ID不能为空");
+        }
+        return deviceAttachmentMapper.selectList(Wrappers.<DeviceAttachment>lambdaQuery()
+                        .eq(DeviceAttachment::getDeviceId, deviceId)
+                        .orderByDesc(DeviceAttachment::getUploadTime))
+                .stream()
+                .map(item -> toResponse(item, null))
+                .toList();
     }
 
-    private void validateFile(MultipartFile file) {
-        if (file == null || file.isEmpty()) {
-            throw new BusinessException(ErrorCode.BAD_REQUEST, "上传文件不能为空");
+    private DeviceAttachment getAttachmentOrThrow(Long id) {
+        DeviceAttachment attachment = deviceAttachmentMapper.selectById(id);
+        if (attachment == null) {
+            throw new BusinessException(ErrorCode.ATTACHMENT_NOT_FOUND);
         }
-        if (file.getSize() > maxSize) {
-            throw new BusinessException(ErrorCode.BAD_REQUEST, "文件大小超出限制");
-        }
-        String filename = file.getOriginalFilename();
-        if (!StringUtils.hasText(filename) || !filename.contains(".")) {
-            throw new BusinessException(ErrorCode.BAD_REQUEST, "文件格式不支持");
-        }
-        String ext = filename.substring(filename.lastIndexOf('.') + 1).toLowerCase(Locale.ROOT);
-        List<String> allowed = Arrays.asList(allowedExtensions.split(","));
-        if (!allowed.contains(ext)) {
-            throw new BusinessException(ErrorCode.BAD_REQUEST, "不允许的文件类型: " + ext);
-        }
+        return attachment;
+    }
+
+    private FileUploadResponse toResponse(DeviceAttachment attachment, String category) {
+        return FileUploadResponse.builder()
+                .fileId(attachment.getId())
+                .deviceId(attachment.getDeviceId())
+                .fileName(attachment.getFileName())
+                .fileTypeCode(attachment.getFileTypeCode())
+                .category(category)
+                .fileSize(attachment.getFileSize())
+                .filePath(attachment.getFilePath())
+                .url(minioUtils.getObjectUrl(attachment.getFilePath()))
+                .uploadTime(attachment.getUploadTime())
+                .build();
+    }
+
+    private String resolveContentType(String fileName) {
+        String extension = fileUploadValidator.resolveExtension(fileName);
+        return switch (extension) {
+            case "jpg", "jpeg" -> MediaType.IMAGE_JPEG_VALUE;
+            case "png" -> MediaType.IMAGE_PNG_VALUE;
+            case "gif" -> MediaType.IMAGE_GIF_VALUE;
+            case "webp" -> "image/webp";
+            case "pdf" -> MediaType.APPLICATION_PDF_VALUE;
+            case "doc" -> "application/msword";
+            case "docx" -> "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+            case "xls" -> "application/vnd.ms-excel";
+            case "xlsx" -> "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+            case "txt" -> MediaType.TEXT_PLAIN_VALUE;
+            default -> MediaType.APPLICATION_OCTET_STREAM_VALUE;
+        };
     }
 }

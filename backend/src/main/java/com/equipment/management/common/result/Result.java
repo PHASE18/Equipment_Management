@@ -3,19 +3,10 @@ package com.equipment.management.common.result;
 import com.equipment.management.common.constant.ErrorCode;
 import lombok.Data;
 
-import java.io.Serial;
-import java.io.Serializable;
-
-/**
- * 统一 REST 响应包装
- */
 @Data
-public class Result<T> implements Serializable {
-
-    @Serial
-    private static final long serialVersionUID = 1L;
-
-    private int code;
+public class Result<T> {
+    private Boolean success;
+    private Integer code;
     private String message;
     private T data;
 
@@ -25,8 +16,9 @@ public class Result<T> implements Serializable {
 
     public static <T> Result<T> success(T data) {
         Result<T> result = new Result<>();
-        result.setCode(ErrorCode.SUCCESS.getCode());
-        result.setMessage(ErrorCode.SUCCESS.getMessage());
+        result.setSuccess(true);
+        result.setCode(200);
+        result.setMessage("操作成功");
         result.setData(data);
         return result;
     }
@@ -37,17 +29,17 @@ public class Result<T> implements Serializable {
 
     public static <T> Result<T> fail(int code, String message) {
         Result<T> result = new Result<>();
+        result.setSuccess(false);
         result.setCode(code);
         result.setMessage(message);
-        result.setData(null);
         return result;
     }
 
-    public static <T> Result<T> fail(int code, String message, T data) {
+    public static <T> Result<T> error(Integer code, String message) {
         Result<T> result = new Result<>();
+        result.setSuccess(false);
         result.setCode(code);
         result.setMessage(message);
-        result.setData(data);
         return result;
     }
 }

@@ -18,7 +18,7 @@ USE `equipment_manager`;
 -- 1. 部门表
 CREATE TABLE IF NOT EXISTS `sys_department` (
     `id`              BIGINT       NOT NULL AUTO_INCREMENT COMMENT '主键ID',
-    `department_name` VARCHAR(100) NOT NULL                COMMENT '部门名称',
+    `department_name` VARCHAR(500) NOT NULL                COMMENT '部门名称',
     `parent_id`       BIGINT       NOT NULL DEFAULT 0     COMMENT '父部门ID，0表示顶级',
     `leader`          VARCHAR(50)           DEFAULT NULL  COMMENT '负责人',
     `phone`           VARCHAR(30)           DEFAULT NULL  COMMENT '联系电话',
@@ -35,9 +35,9 @@ CREATE TABLE IF NOT EXISTS `sys_department` (
 -- 2. 用户表
 CREATE TABLE IF NOT EXISTS `sys_user` (
     `id`            BIGINT       NOT NULL AUTO_INCREMENT COMMENT '主键ID',
-    `username`      VARCHAR(50)  NOT NULL                COMMENT '登录用户名',
+    `username`      VARCHAR(100)  NOT NULL                COMMENT '登录用户名',
     `password`      VARCHAR(255) NOT NULL                COMMENT '密码（BCrypt加密）',
-    `real_name`     VARCHAR(50)           DEFAULT NULL  COMMENT '真实姓名',
+    `real_name`     VARCHAR(300)           DEFAULT NULL  COMMENT '真实姓名',
     `department_id` BIGINT                DEFAULT NULL  COMMENT '所属部门ID',
     `phone`         VARCHAR(30)           DEFAULT NULL  COMMENT '手机号',
     `email`         VARCHAR(100)          DEFAULT NULL  COMMENT '邮箱',
@@ -56,7 +56,7 @@ CREATE TABLE IF NOT EXISTS `sys_user` (
 -- 3. 角色表
 CREATE TABLE IF NOT EXISTS `sys_role` (
     `id`          BIGINT       NOT NULL AUTO_INCREMENT COMMENT '主键ID',
-    `role_name`   VARCHAR(50)  NOT NULL                COMMENT '角色名称',
+    `role_name`   VARCHAR(300)  NOT NULL                COMMENT '角色名称',
     `role_code`   VARCHAR(50)  NOT NULL                COMMENT '角色编码',
     `remark`      VARCHAR(200)          DEFAULT NULL  COMMENT '备注',
     `create_by`   BIGINT                DEFAULT NULL  COMMENT '创建人ID',

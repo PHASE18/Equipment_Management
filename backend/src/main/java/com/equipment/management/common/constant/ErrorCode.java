@@ -18,6 +18,7 @@ public enum ErrorCode {
 
     TOKEN_EXPIRED(1001, "Token失效"),
     LOGIN_FAILED(1002, "用户名密码错误"),
+    ACCOUNT_LOCKED(1016, "账号已锁定"),
     PERMISSION_DENIED(1003, "权限不足"),
     DEVICE_NOT_FOUND(1004, "设备不存在"),
     DEVICE_NO_DUPLICATE(1005, "设备编号重复"),

@@ -2,6 +2,7 @@ package com.equipment.management.service;
 
 import com.equipment.management.dto.request.RolePermissionRequest;
 import com.equipment.management.dto.request.UserRoleRequest;
+import com.equipment.management.dto.response.MenuItemResponse;
 import com.equipment.management.entity.SysPermission;
 
 import java.util.List;
@@ -9,6 +10,10 @@ import java.util.List;
 public interface PermissionService {
 
     List<SysPermission> getMenuTree();
+
+    List<MenuItemResponse> getUserMenus(Long userId);
+
+    List<String> getUserPermissionCodes(Long userId);
 
     List<SysPermission> getPermissionTree();
 

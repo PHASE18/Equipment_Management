@@ -16,3 +16,13 @@ backend/
     ├── service/ + service/impl/     # 15 个 Service 接口 + 实现（TODO 占位）
     ├── dto/request/ + dto/response/
     └── entity/                      # 与数据库表对应的实体
+
+4.12 日志审计模块 完成全局审计日志自动记录，采用 AOP 切面拦截 Controller 写操作。
+Controller (POST/PUT/DELETE)
+        │
+        ▼
+OperationLogAspect（AOP 环绕通知）
+        │
+        ├─ AuditMetadataResolver   → 解析操作类型、表名、业务ID、IP、浏览器
+        ├─ EntitySnapshotLoader    → UPDATE/DELETE/状态变更前抓取 before_json
+        └─ AuditLogService（@Async）→ 异步写入 sys_operation_log

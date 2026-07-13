@@ -8,7 +8,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/equipment_manager?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
     username: root
-    password: root
+    password: 105419
   servlet:
     multipart:
       max-file-size: 50MB
@@ -28,6 +28,12 @@ mybatis-plus:
 jwt:
   secret: equipment-management-jwt-secret-key-change-in-production
   expiration: 86400000
+  refresh-grace-period: 604800000
+
+auth:
+  login:
+    max-failures: 5
+    lock-duration-minutes: 30
 
 minio:
   endpoint: http://localhost:9000
@@ -37,5 +43,10 @@ minio:
 
 file:
   upload:
-    allowed-extensions: jpg,jpeg,png,pdf,doc,docx,xlsx,xls
+    allowed-extensions: jpg,jpeg,png,gif,webp,bmp,pdf,doc,docx,txt,xls,xlsx
     max-size: 52428800
+    categories:
+      image: jpg,jpeg,png,gif,webp,bmp
+      document: pdf,doc,docx,txt
+      excel: xls,xlsx
+      contract: pdf,doc,docx

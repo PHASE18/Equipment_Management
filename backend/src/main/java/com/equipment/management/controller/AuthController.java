@@ -1,6 +1,8 @@
 package com.equipment.management.controller;
 
+import com.equipment.management.annotation.AllowExpiredToken;
 import com.equipment.management.annotation.Anonymous;
+import com.equipment.management.annotation.IgnoreAudit;
 import com.equipment.management.annotation.RequireAuth;
 import com.equipment.management.common.result.Result;
 import com.equipment.management.dto.request.LoginRequest;
@@ -8,6 +10,7 @@ import com.equipment.management.dto.request.PasswordChangeRequest;
 import com.equipment.management.dto.response.LoginResponse;
 import com.equipment.management.dto.response.UserInfoResponse;
 import com.equipment.management.service.AuthService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,8 +28,15 @@ public class AuthController {
 
     @Anonymous
     @PostMapping("/api/login")
-    public Result<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
-        return Result.success(authService.login(request));
+    public Result<LoginResponse> login(@Valid @RequestBody LoginRequest request, HttpServletRequest httpRequest) {
+        return Result.success(authService.login(request, httpRequest));
+    }
+
+    @IgnoreAudit
+    @AllowExpiredToken
+    @PostMapping("/api/refresh")
+    public Result<LoginResponse> refreshToken() {
+        return Result.success(authService.refreshToken());
     }
 
     @GetMapping("/api/user/info")
