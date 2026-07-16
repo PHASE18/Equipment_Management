@@ -42,6 +42,13 @@ public class FileServiceImpl implements FileService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public FileUploadResponse upload(MultipartFile file, Long deviceId, String category, String fileTypeCode) {
+        return upload(file, deviceId, null, category, fileTypeCode);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public FileUploadResponse upload(MultipartFile file, Long deviceId, Long maintenanceId,
+                                     String category, String fileTypeCode) {
         if (deviceId == null) {
             throw new BusinessException(ErrorCode.BAD_REQUEST, "设备ID不能为空");
         }
@@ -61,6 +68,7 @@ public class FileServiceImpl implements FileService {
 
         DeviceAttachment attachment = new DeviceAttachment();
         attachment.setDeviceId(deviceId);
+        attachment.setMaintenanceId(maintenanceId);
         attachment.setFileName(file.getOriginalFilename());
         attachment.setFileTypeCode(resolvedTypeCode);
         attachment.setFileSize(file.getSize());
@@ -121,6 +129,19 @@ public class FileServiceImpl implements FileService {
                 .toList();
     }
 
+    @Override
+    public List<FileUploadResponse> listByMaintenanceId(Long maintenanceId) {
+        if (maintenanceId == null) {
+            throw new BusinessException(ErrorCode.BAD_REQUEST, "维修工单ID不能为空");
+        }
+        return deviceAttachmentMapper.selectList(Wrappers.<DeviceAttachment>lambdaQuery()
+                        .eq(DeviceAttachment::getMaintenanceId, maintenanceId)
+                        .orderByDesc(DeviceAttachment::getUploadTime))
+                .stream()
+                .map(item -> toResponse(item, null))
+                .toList();
+    }
+
     private DeviceAttachment getAttachmentOrThrow(Long id) {
         DeviceAttachment attachment = deviceAttachmentMapper.selectById(id);
         if (attachment == null) {
@@ -133,6 +154,7 @@ public class FileServiceImpl implements FileService {
         return FileUploadResponse.builder()
                 .fileId(attachment.getId())
                 .deviceId(attachment.getDeviceId())
+                .maintenanceId(attachment.getMaintenanceId())
                 .fileName(attachment.getFileName())
                 .fileTypeCode(attachment.getFileTypeCode())
                 .category(category)

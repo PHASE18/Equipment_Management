@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 public class DeviceAttachment extends BaseEntity {
 
     private Long deviceId;
+    private Long maintenanceId;
     private String fileName;
     private String fileTypeCode;
     private Long fileSize;

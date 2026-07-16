@@ -10,9 +10,13 @@ public interface FileService {
 
     FileUploadResponse upload(MultipartFile file, Long deviceId, String category, String fileTypeCode);
 
+    FileUploadResponse upload(MultipartFile file, Long deviceId, Long maintenanceId, String category, String fileTypeCode);
+
     void download(Long id, HttpServletResponse response);
 
     void delete(Long id);
 
     List<FileUploadResponse> listByDeviceId(Long deviceId);
+
+    List<FileUploadResponse> listByMaintenanceId(Long maintenanceId);
 }

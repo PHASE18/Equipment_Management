@@ -1,60 +1,159 @@
 package com.equipment.management.service.impl;
 
+import com.equipment.management.common.util.StatisticsFilterBuilder;
+import com.equipment.management.dto.StatisticsFilter;
+import com.equipment.management.dto.request.StatisticsQuery;
+import com.equipment.management.dto.response.DashboardResponse;
+import com.equipment.management.mapper.StatisticsMapper;
 import com.equipment.management.service.StatisticsService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @Service
+@RequiredArgsConstructor
 public class StatisticsServiceImpl implements StatisticsService {
 
+    private final StatisticsMapper statisticsMapper;
+
     @Override
-    public Map<String, Object> homeStatistics() {
-        // TODO: 统计设备总数、维修总数、项目数、品牌数等
+    public DashboardResponse dashboard(StatisticsQuery query) {
+        StatisticsFilter filter = StatisticsFilterBuilder.from(query);
+        Map<String, Object> summaryMap = statisticsMapper.selectDeviceSummary(filter);
+        Long monthMaintenanceCount = statisticsMapper.selectMonthMaintenanceCount(filter);
+
+        return DashboardResponse.builder()
+                .summary(buildSummary(summaryMap, monthMaintenanceCount))
+                .statusChart(toChartItems(statisticsMapper.selectStatusDistribution(filter)))
+                .brandChart(toChartItems(statisticsMapper.selectBrandDistribution(filter)))
+                .typeChart(toChartItems(statisticsMapper.selectTypeDistribution(filter)))
+                .departmentChart(toChartItems(statisticsMapper.selectDepartmentDistribution(filter)))
+                .projectChart(toChartItems(statisticsMapper.selectProjectDistribution(filter)))
+                .faultChart(toChartItems(statisticsMapper.selectFaultDistribution(filter)))
+                .maintenanceTrendChart(toChartItems(statisticsMapper.selectMaintenanceTrend(filter)))
+                .maintenanceCostChart(toChartItems(statisticsMapper.selectMaintenanceCostTrend(filter)))
+                .warrantyChart(toChartItems(statisticsMapper.selectWarrantyDistribution(filter)))
+                .build();
+    }
+
+    @Override
+    public Map<String, Object> homeStatistics(StatisticsQuery query) {
+        DashboardResponse.DashboardSummary summary = dashboard(query).getSummary();
         Map<String, Object> data = new HashMap<>();
-        data.put("deviceTotal", 0);
-        data.put("maintenanceTotal", 0);
-        data.put("projectTotal", 0);
-        data.put("brandTotal", 0);
+        data.put("deviceTotal", summary.getDeviceTotal());
+        data.put("inUseCount", summary.getInUseCount());
+        data.put("maintainingCount", summary.getMaintainingCount());
+        data.put("stoppedCount", summary.getStoppedCount());
+        data.put("scrappedCount", summary.getScrappedCount());
+        data.put("warrantyExpiringCount", summary.getWarrantyExpiringCount());
+        data.put("monthNewDeviceCount", summary.getMonthNewDeviceCount());
+        data.put("monthMaintenanceCount", summary.getMonthMaintenanceCount());
+        data.put("maintenanceTotal", summary.getMonthMaintenanceCount());
         return data;
     }
 
     @Override
-    public List<Map<String, Object>> brandStatistics() {
-        // TODO: 品牌分布统计
-        return Collections.emptyList();
+    public List<Map<String, Object>> brandStatistics(StatisticsQuery query) {
+        return statisticsMapper.selectBrandDistribution(StatisticsFilterBuilder.from(query));
     }
 
     @Override
-    public List<Map<String, Object>> typeStatistics() {
-        // TODO: 设备类型统计
-        return Collections.emptyList();
+    public List<Map<String, Object>> typeStatistics(StatisticsQuery query) {
+        return statisticsMapper.selectTypeDistribution(StatisticsFilterBuilder.from(query));
     }
 
     @Override
-    public List<Map<String, Object>> statusStatistics() {
-        // TODO: 设备状态统计
-        return Collections.emptyList();
+    public List<Map<String, Object>> statusStatistics(StatisticsQuery query) {
+        return statisticsMapper.selectStatusDistribution(StatisticsFilterBuilder.from(query));
     }
 
     @Override
-    public List<Map<String, Object>> faultStatistics() {
-        // TODO: 故障类型统计
-        return Collections.emptyList();
+    public List<Map<String, Object>> faultStatistics(StatisticsQuery query) {
+        return statisticsMapper.selectFaultDistribution(StatisticsFilterBuilder.from(query));
     }
 
     @Override
-    public List<Map<String, Object>> faultRank() {
-        // TODO: 故障排行
-        return Collections.emptyList();
+    public List<Map<String, Object>> faultRank(StatisticsQuery query) {
+        return faultStatistics(query);
     }
 
     @Override
-    public List<Map<String, Object>> costStatistics() {
-        // TODO: 维修费用统计
-        return Collections.emptyList();
+    public List<Map<String, Object>> costStatistics(StatisticsQuery query) {
+        return statisticsMapper.selectMaintenanceCostTrend(StatisticsFilterBuilder.from(query));
+    }
+
+    @Override
+    public List<Map<String, Object>> departmentStatistics(StatisticsQuery query) {
+        return statisticsMapper.selectDepartmentDistribution(StatisticsFilterBuilder.from(query));
+    }
+
+    @Override
+    public List<Map<String, Object>> projectStatistics(StatisticsQuery query) {
+        return statisticsMapper.selectProjectDistribution(StatisticsFilterBuilder.from(query));
+    }
+
+    @Override
+    public List<Map<String, Object>> maintenanceTrend(StatisticsQuery query) {
+        return statisticsMapper.selectMaintenanceTrend(StatisticsFilterBuilder.from(query));
+    }
+
+    @Override
+    public List<Map<String, Object>> warrantyStatistics(StatisticsQuery query) {
+        return statisticsMapper.selectWarrantyDistribution(StatisticsFilterBuilder.from(query));
+    }
+
+    private DashboardResponse.DashboardSummary buildSummary(Map<String, Object> summaryMap, Long monthMaintenanceCount) {
+        return DashboardResponse.DashboardSummary.builder()
+                .deviceTotal(toLong(summaryMap.get("deviceTotal")))
+                .inUseCount(toLong(summaryMap.get("inUseCount")))
+                .maintainingCount(toLong(summaryMap.get("maintainingCount")))
+                .stoppedCount(toLong(summaryMap.get("stoppedCount")))
+                .scrappedCount(toLong(summaryMap.get("scrappedCount")))
+                .warrantyExpiringCount(toLong(summaryMap.get("warrantyExpiringCount")))
+                .monthNewDeviceCount(toLong(summaryMap.get("monthNewDeviceCount")))
+                .monthMaintenanceCount(monthMaintenanceCount != null ? monthMaintenanceCount : 0L)
+                .build();
+    }
+
+    private List<DashboardResponse.ChartItem> toChartItems(List<Map<String, Object>> rows) {
+        if (rows == null || rows.isEmpty()) {
+            return Collections.emptyList();
+        }
+        return rows.stream()
+                .map(row -> DashboardResponse.ChartItem.builder()
+                        .code(row.get("code") != null ? String.valueOf(row.get("code")) : null)
+                        .name(row.get("name") != null ? String.valueOf(row.get("name")) : null)
+                        .value(toLong(row.get("value")))
+                        .amount(toBigDecimal(row.get("amount")))
+                        .build())
+                .toList();
+    }
+
+    private Long toLong(Object value) {
+        if (value == null) {
+            return 0L;
+        }
+        if (value instanceof Number number) {
+            return number.longValue();
+        }
+        return Long.parseLong(String.valueOf(value));
+    }
+
+    private BigDecimal toBigDecimal(Object value) {
+        if (value == null) {
+            return null;
+        }
+        if (value instanceof BigDecimal decimal) {
+            return decimal;
+        }
+        if (value instanceof Number number) {
+            return BigDecimal.valueOf(number.doubleValue());
+        }
+        return new BigDecimal(String.valueOf(value));
     }
 }

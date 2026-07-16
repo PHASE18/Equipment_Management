@@ -13,6 +13,7 @@ import com.equipment.management.service.SysUserRoleService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class SysUserRoleServiceImpl extends ServiceImpl<SysUserRoleMapper, SysUserRole> implements SysUserRoleService {
@@ -24,6 +25,15 @@ public class SysUserRoleServiceImpl extends ServiceImpl<SysUserRoleMapper, SysUs
                 .eq(roleId != null, SysUserRole::getRoleId, roleId)
                 .orderByDesc(SysUserRole::getCreateTime);
         return PageUtils.toPageResult(page(PageUtils.buildPage(query), wrapper));
+    }
+
+    @Override
+    public List<Long> listRoleIdsByUserId(Long userId) {
+        return list(Wrappers.<SysUserRole>lambdaQuery()
+                .eq(SysUserRole::getUserId, userId))
+                .stream()
+                .map(SysUserRole::getRoleId)
+                .toList();
     }
 
     @Override

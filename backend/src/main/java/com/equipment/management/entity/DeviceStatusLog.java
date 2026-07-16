@@ -17,6 +17,7 @@ public class DeviceStatusLog {
     private String oldStatusCode;
     private String newStatusCode;
     private String changeReason;
+    private String remark;
     private Long operatorId;
     private LocalDateTime changeTime;
 }

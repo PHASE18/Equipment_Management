@@ -8,13 +8,21 @@ import com.equipment.management.common.query.PageQuery;
 import com.equipment.management.common.result.PageResult;
 import com.equipment.management.common.result.Result;
 import com.equipment.management.dto.request.MaintenanceQuery;
+import com.equipment.management.dto.response.FaultTypeStatResponse;
+import com.equipment.management.dto.response.MaintenanceDetailResponse;
 import com.equipment.management.entity.DeviceMaintenance;
 import com.equipment.management.service.DeviceMaintenanceService;
 import jakarta.validation.Valid;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @RequireAuth
@@ -27,8 +35,44 @@ public class DeviceMaintenanceController extends BaseCrudController<DeviceMainte
     }
 
     @GetMapping("/list")
-    public Result<PageResult<DeviceMaintenance>> list(@Valid MaintenanceQuery query) {
+    public Result<PageResult<MaintenanceDetailResponse>> list(@Valid MaintenanceQuery query) {
         return Result.success(baseService.page(query));
+    }
+
+    @GetMapping("/fault-stats")
+    public Result<List<FaultTypeStatResponse>> faultStats() {
+        return Result.success(baseService.faultTypeStatistics());
+    }
+
+    @GetMapping("/detail/{id}")
+    public Result<MaintenanceDetailResponse> detail(@PathVariable Long id) {
+        return Result.success(baseService.getDetailVo(id));
+    }
+
+    @Override
+    @PostMapping
+    public Result<Void> create(@Valid @RequestBody DeviceMaintenance entity) {
+        baseService.createMaintenance(entity);
+        return Result.success();
+    }
+
+    @PostMapping("/submit")
+    public Result<Long> submit(@Valid @RequestBody DeviceMaintenance entity) {
+        baseService.createMaintenance(entity);
+        return Result.success(entity.getId());
+    }
+
+    @Override
+    @PutMapping
+    public Result<Void> update(@Valid @RequestBody DeviceMaintenance entity) {
+        baseService.updateMaintenance(entity);
+        return Result.success();
+    }
+
+    @PutMapping("/{id}/complete")
+    public Result<Void> complete(@PathVariable Long id) {
+        baseService.completeMaintenance(id);
+        return Result.success();
     }
 
     @Override
@@ -38,7 +82,7 @@ public class DeviceMaintenanceController extends BaseCrudController<DeviceMainte
             wrapper.and(w -> w.like("maintenance_person", query.getKeyword())
                     .or().like("fault_description", query.getKeyword()));
         }
-        wrapper.orderByDesc("create_time");
+        wrapper.orderByDesc("maintenance_date");
         return wrapper;
     }
 }

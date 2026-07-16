@@ -1,0 +1,475 @@
+{
+  "info": {
+    "name": "设备管理系统API-V1.0",
+    "description": "《设备管理系统接口设计说明书V1.0》Apifox测试脚本，HTTPS+JWT认证，统一返回格式",
+    "version": "1.0",
+    "schema": "https://apifox.com/apidoc/import/v2"
+  },
+  "server": [
+    {
+      "url": "https://{{baseUrl}}",
+      "description": "项目基础域名，环境变量配置baseUrl"
+    }
+  ],
+  "variables": [
+    {
+      "key": "baseUrl",
+      "value": "127.0.0.1:8080",
+      "type": "string",
+      "description": "后端服务地址，正式环境替换域名"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string",
+      "description": "登录后自动赋值JWT Token，全局请求头自动携带"
+    }
+  ],
+  "globalHeaders": [
+    {
+      "key": "Content-Type",
+      "value": "application/json",
+      "description": "全局默认JSON请求体"
+    },
+    {
+      "key": "Authorization",
+      "value": "Bearer {{token}}",
+      "description": "JWT鉴权头，登录接口后置脚本自动填充token变量"
+    }
+  ],
+  "items": [
+    {
+      "name": "一、登录认证模块（4个接口）",
+      "items": [
+        {
+          "name": "3.1 登录-POST /api/login",
+          "method": "POST",
+          "path": "/api/login",
+          "description": "账号密码登录，后置脚本自动提取token存入全局变量，无需手动复制",
+          "requestBody": {
+            "mode": "raw",
+            "raw": "{\"username\":\"admin\",\"password\":\"123456\"}",
+            "rawLanguage": "json"
+          },
+          "afterScript": "// 登录成功自动赋值全局token\nconst res = pm.response.json();\nif(res.code === 200){\n    pm.environment.set(\"token\", res.data.token);\n    console.log(\"Token已自动保存：\", res.data.token);\n}"
+        },
+        {
+          "name": "3.2 获取当前登录用户-GET /api/user/info",
+          "method": "GET",
+          "path": "/api/user/info",
+          "description": "校验token有效性，获取当前登录人信息"
+        },
+        {
+          "name": "3.3 修改密码-PUT /api/user/password",
+          "method": "PUT",
+          "path": "/api/user/password",
+          "requestBody": {
+            "mode": "raw",
+            "raw": "{\"oldPwd\":\"123456\",\"newPwd\":\"654321\",\"confirmPwd\":\"654321\"}",
+            "rawLanguage": "json"
+          }
+        },
+        {
+          "name": "3.4 退出登录-POST /api/logout",
+          "method": "POST",
+          "path": "/api/logout",
+          "afterScript": "// 登出清空全局token\npm.environment.unset(\"token\");\nconsole.log(\"已清除本地token\");"
+        }
+      ]
+    },
+    {
+      "name": "二、用户管理模块（5个接口）",
+      "items": [
+        {
+          "name": "查询用户列表-GET /api/user/list",
+          "method": "GET",
+          "path": "/api/user/list",
+          "params": [
+            {"key":"page","value":"1","description":"页码pageNum"},
+            {"key":"size","value":"20","description":"每页条数pageSize"},
+            {"key":"departmentId","value":"","description":"部门ID筛选"},
+            {"key":"keyword","value":"","description":"用户名/姓名模糊搜索"}
+          ]
+        },
+        {
+          "name": "新增用户-POST /api/user",
+          "method": "POST",
+          "path": "/api/user",
+          "requestBody": {
+            "mode": "raw",
+            "raw": "{\"username\":\"test01\",\"password\":\"123456\",\"name\":\"测试人员\",\"departmentId\":1,\"phone\":\"13800138000\"}",
+            "rawLanguage": "json"
+          }
+        },
+        {
+          "name": "修改用户-PUT /api/user",
+          "method": "PUT",
+          "path": "/api/user",
+          "requestBody": {
+            "mode": "raw",
+            "raw": "{\"id\":2,\"name\":\"测试人员修改\",\"departmentId\":1,\"phone\":\"13900139000\"}",
+            "rawLanguage": "json"
+          }
+        },
+        {
+          "name": "删除用户-DELETE /api/user/{id}",
+          "method": "DELETE",
+          "path": "/api/user/2"
+        },
+        {
+          "name": "重置用户密码-PUT /api/user/resetPassword/{id}",
+          "method": "PUT",
+          "path": "/api/user/resetPassword/2"
+        }
+      ]
+    },
+    {
+      "name": "三、部门管理模块（4个接口）",
+      "items": [
+        {
+          "name": "获取部门树形结构-GET /api/department/tree",
+          "method": "GET",
+          "path": "/api/department/tree"
+        },
+        {
+          "name": "新增部门-POST /api/department",
+          "method": "POST",
+          "path": "/api/department",
+          "requestBody": {
+            "mode": "raw",
+            "raw": "{\"name\":\"信息科技处\",\"parentId\":0,\"sort\":1}",
+            "rawLanguage": "json"
+          }
+        },
+        {
+          "name": "修改部门-PUT /api/department",
+          "method": "PUT",
+          "path": "/api/department",
+          "requestBody": {
+            "mode": "raw",
+            "raw": "{\"id\":1,\"name\":\"信息科技部\",\"parentId\":0,\"sort\":1}",
+            "rawLanguage": "json"
+          }
+        },
+        {
+          "name": "删除部门-DELETE /api/department/{id}",
+          "method": "DELETE",
+          "path": "/api/department/1"
+        }
+      ]
+    },
+    {
+      "name": "四、设备管理模块（8个接口）",
+      "items": [
+        {
+          "name": "查询设备分页列表-GET /api/device/list",
+          "method": "GET",
+          "path": "/api/device/list",
+          "params": [
+            {"key":"page","value":"1"},
+            {"key":"size","value":"20"},
+            {"key":"deviceNo","value":"","description":"设备编号"},
+            {"key":"deviceName","value":"","description":"设备名称"},
+            {"key":"brand","value":"","description":"品牌"},
+            {"key":"model","value":"","description":"型号"},
+            {"key":"status","value":"","description":"设备状态"},
+            {"key":"departmentId","value":""},
+            {"key":"projectId","value":""}
+          ]
+        },
+        {
+          "name": "获取设备详情-GET /api/device/{id}",
+          "method": "GET",
+          "path": "/api/device/1"
+        },
+        {
+          "name": "新增设备-POST /api/device",
+          "method": "POST",
+          "path": "/api/device",
+          "requestBody": {
+            "mode": "raw",
+            "raw": "{\"deviceNo\":\"SVR001\",\"deviceName\":\"数据库服务器\",\"brand\":\"Dell\",\"model\":\"R750\",\"status\":\"在用\",\"departmentId\":1,\"projectId\":1}",
+            "rawLanguage": "json"
+          }
+        },
+        {
+          "name": "修改设备-PUT /api/device",
+          "method": "PUT",
+          "path": "/api/device",
+          "requestBody": {
+            "mode": "raw",
+            "raw": "{\"id\":1,\"deviceNo\":\"SVR001\",\"deviceName\":\"主数据库服务器\",\"brand\":\"Dell\",\"model\":\"R750\",\"status\":\"在用\"}",
+            "rawLanguage": "json"
+          }
+        },
+        {
+          "name": "逻辑删除设备-DELETE /api/device/{id}",
+          "method": "DELETE",
+          "path": "/api/device/1"
+        },
+        {
+          "name": "设备生命周期记录查询-GET /api/device/status/list/{deviceId}",
+          "method": "GET",
+          "path": "/api/device/status/list/1"
+        },
+        {
+          "name": "变更设备状态-POST /api/device/status/change",
+          "method": "POST",
+          "path": "/api/device/status/change",
+          "requestBody": {
+            "mode": "raw",
+            "raw": "{\"deviceId\":1,\"newStatus\":\"维修中\",\"reason\":\"硬盘损坏\"}",
+            "rawLanguage": "json"
+          }
+        },
+        {
+          "name": "IP信息管理分组",
+          "items": [
+            {
+              "name": "查询设备绑定IP-GET /api/ip/list/{deviceId}",
+              "method": "GET",
+              "path": "/api/ip/list/1"
+            },
+            {
+              "name": "保存设备IP-POST /api/ip",
+              "method": "POST",
+              "path": "/api/ip",
+              "requestBody": {
+                "mode": "raw",
+                "raw": "{\"deviceId\":1,\"businessIp\":\"10.1.1.1\",\"managementIp\":\"192.168.1.1\"}",
+                "rawLanguage": "json"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "五、项目管理模块（6个接口）",
+      "items": [
+        {
+          "name": "项目列表查询-GET /api/project/list",
+          "method": "GET",
+          "path": "/api/project/list",
+          "params": [{"key":"page","value":"1"},{"key":"size","value":"20"},{"key":"keyword","value":""}]
+        },
+        {
+          "name": "新增项目-POST /api/project",
+          "method": "POST",
+          "path": "/api/project",
+          "requestBody": {
+            "mode": "raw",
+            "raw": "{\"projectName\":\"数字化平台项目\",\"manager\":\"张三\"}",
+            "rawLanguage": "json"
+          }
+        },
+        {
+          "name": "修改项目-PUT /api/project",
+          "method": "PUT",
+          "path": "/api/project",
+          "requestBody": {
+            "mode": "raw",
+            "raw": "{\"id\":1,\"projectName\":\"企业数字化平台\",\"manager\":\"张三\"}",
+            "rawLanguage": "json"
+          }
+        },
+        {
+          "name": "删除项目-DELETE /api/project/{id}",
+          "method": "DELETE",
+          "path": "/api/project/1"
+        },
+        {
+          "name": "项目绑定设备-POST /api/project/bindDevice",
+          "method": "POST",
+          "path": "/api/project/bindDevice",
+          "requestBody": {
+            "mode": "raw",
+            "raw": "{\"projectId\":1,\"deviceIdList\":[1,2]}",
+            "rawLanguage": "json"
+          }
+        },
+        {
+          "name": "项目解除设备绑定-DELETE /api/project/unbind",
+          "method": "DELETE",
+          "path": "/api/project/unbind",
+          "requestBody": {
+            "mode": "raw",
+            "raw": "{\"projectId\":1,\"deviceId\":1}",
+            "rawLanguage": "json"
+          }
+        }
+      ]
+    },
+    {
+      "name": "六、维修管理模块（5个接口）",
+      "items": [
+        {
+          "name": "维修记录列表-GET /api/maintenance/list",
+          "method": "GET",
+          "path": "/api/maintenance/list",
+          "params": [{"key":"page","value":"1"},{"key":"size","value":"20"},{"key":"deviceId","value":""}]
+        },
+        {
+          "name": "新增维修记录-POST /api/maintenance",
+          "method": "POST",
+          "path": "/api/maintenance",
+          "requestBody": {
+            "mode": "raw",
+            "raw": "{\"deviceId\":1,\"faultType\":\"硬盘故障\",\"faultReason\":\"磁盘坏道\",\"replaceParts\":\"SSD\",\"cost\":1200}",
+            "rawLanguage": "json"
+          }
+        },
+        {
+          "name": "修改维修记录-PUT /api/maintenance",
+          "method": "PUT",
+          "path": "/api/maintenance",
+          "requestBody": {
+            "mode": "raw",
+            "raw": "{\"id\":1,\"deviceId\":1,\"faultType\":\"硬盘故障\",\"cost\":1500}",
+            "rawLanguage": "json"
+          }
+        },
+        {
+          "name": "删除维修记录-DELETE /api/maintenance/{id}",
+          "method": "DELETE",
+          "path": "/api/maintenance/1"
+        }
+      ]
+    },
+    {
+      "name": "七、附件文件管理（5个接口）",
+      "items": [
+        {
+          "name": "上传附件-POST /api/file/upload",
+          "method": "POST",
+          "path": "/api/file/upload",
+          "bodyMode": "form-data",
+          "formData": [{"key":"file","type":"file","value":""}],
+          "headers": [{"key":"Content-Type","value":"multipart/form-data","disabled":true}]
+        },
+        {
+          "name": "下载附件-GET /api/file/download/{id}",
+          "method": "GET",
+          "path": "/api/file/download/100"
+        },
+        {
+          "name": "删除附件-DELETE /api/file/{id}",
+          "method": "DELETE",
+          "path": "/api/file/100"
+        },
+        {
+          "name": "查询设备附件列表-GET /api/file/list/{deviceId}",
+          "method": "GET",
+          "path": "/api/file/list/1"
+        }
+      ]
+    },
+    {
+      "name": "八、Excel导入导出（3个接口）",
+      "items": [
+        {
+          "name": "Excel批量导入-POST /api/excel/import",
+          "method": "POST",
+          "path": "/api/excel/import",
+          "bodyMode": "form-data",
+          "formData": [{"key":"excelFile","type":"file","value":""}],
+          "headers": [{"key":"Content-Type","value":"multipart/form-data","disabled":true}]
+        },
+        {
+          "name": "条件导出Excel-GET /api/excel/export",
+          "method": "GET",
+          "path": "/api/excel/export",
+          "params": [{"key":"deviceNo","value":""},{"key":"status","value":""}]
+        },
+        {
+          "name": "下载导入模板-GET /api/excel/template",
+          "method": "GET",
+          "path": "/api/excel/template"
+        }
+      ]
+    },
+    {
+      "name": "九、统计分析接口（8个接口）",
+      "items": [
+        {"name":"首页大盘统计-GET /api/statistics/home","method":"GET","path":"/api/statistics/home"},
+        {"name":"设备品牌统计-GET /api/statistics/brand","method":"GET","path":"/api/statistics/brand"},
+        {"name":"设备类型统计-GET /api/statistics/type","method":"GET","path":"/api/statistics/type"},
+        {"name":"设备状态统计-GET /api/statistics/status","method":"GET","path":"/api/statistics/status"},
+        {"name":"故障分类统计-GET /api/statistics/fault","method":"GET","path":"/api/statistics/fault"},
+        {"name":"故障频次排行-GET /api/statistics/faultRank","method":"GET","path":"/api/statistics/faultRank"},
+        {"name":"维修费用统计-GET /api/statistics/cost","method":"GET","path":"/api/statistics/cost"}
+      ]
+    },
+    {
+      "name": "十、日志查询模块（3个接口）",
+      "items": [
+        {
+          "name":"登录日志列表-GET /api/log/login",
+          "method":"GET",
+          "path": "/api/log/login",
+          "params": [{"key":"page","value":"1"},{"key":"startTime","value":""},{"key":"endTime","value":""}]
+        },
+        {
+          "name":"系统操作日志-GET /api/log/operation",
+          "method":"GET",
+          "path": "/api/log/operation"
+        },
+        {
+          "name":"设备生命周期变更日志-GET /api/log/status",
+          "method":"GET",
+          "path": "/api/log/status"
+        }
+      ]
+    },
+    {
+      "name": "十一、字典数据接口",
+      "items": [
+        {"name":"设备类型字典-GET /api/dict/deviceType","method":"GET","path":"/api/dict/deviceType"},
+        {"name":"品牌字典-GET /api/dict/brand","method":"GET","path":"/api/dict/brand"},
+        {"name":"故障类型字典-GET /api/dict/faultType","method":"GET","path":"/api/dict/faultType"},
+        {"name":"设备状态字典-GET /api/dict/status","method":"GET","path":"/api/dict/status"}
+      ]
+    },
+    {
+      "name": "十二、系统配置模块（2个接口）",
+      "items": [
+        {"name":"查询系统配置-GET /api/config","method":"GET","path":"/api/config"},
+        {
+          "name":"修改系统配置-PUT /api/config",
+          "method": "PUT",
+          "path": "/api/config",
+          "requestBody": {"mode":"raw","raw":"{\"systemName\":\"企业设备管理系统\",\"expireDay\":30}","rawLanguage":"json"}
+        }
+      ]
+    },
+    {
+      "name": "十三、角色权限模块（5个接口）",
+      "items": [
+        {"name":"查询当前用户菜单-GET /api/menu","method":"GET","path":"/api/menu"},
+        {"name":"查询权限标识列表-GET /api/permission","method":"GET","path":"/api/permission"},
+        {
+          "name":"角色分配权限-POST /api/role/permission",
+          "method": "POST",
+          "path": "/api/role/permission",
+          "requestBody": {"mode":"raw","raw":"{\"roleId\":1,\"permissionIdList\":[1,2,3]}","rawLanguage":"json"}
+        },
+        {
+          "name":"用户分配角色-POST /api/user/role",
+          "method": "POST",
+          "path": "/api/user/role",
+          "requestBody": {"mode":"raw","raw":"{\"userId\":2,\"roleIdList\":[1]}","rawLanguage":"json"}
+        }
+      ]
+    }
+  ],
+  "testScripts": {
+    "global": "// 全局响应统一校验\nconst res = pm.response.json();\n// 打印响应日志\nconsole.log(\"接口返回：\", res);\n// 通用成功校验\nif(res.code !== 200){\n    pm.test(\"业务请求异常\", function () {\n        pm.expect(res.code).to.eql(200);\n        console.error(\"错误信息：\", res.message);\n    });\n}"
+  },
+  "environment": {
+    "name": "本地开发环境",
+    "variables": [
+      {"key": "baseUrl", "value": "127.0.0.1:8080"},
+      {"key": "token", "value": ""}
+    ]
+  }
+}

@@ -11,6 +11,7 @@ public class FileUploadResponse {
 
     private Long fileId;
     private Long deviceId;
+    private Long maintenanceId;
     private String fileName;
     private String fileTypeCode;
     private String category;

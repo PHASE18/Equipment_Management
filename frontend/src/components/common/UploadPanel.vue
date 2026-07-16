@@ -12,6 +12,7 @@ const files = defineModel<FileMeta[]>({ default: () => [] })
 const props = withDefaults(
   defineProps<{
     deviceId: number
+    maintenanceId?: number
     category?: FileCategory
     fileTypeCode?: string
     limit?: number
@@ -66,11 +67,17 @@ async function customUpload(options: UploadRequestOptions) {
     options.onError?.(new Error('deviceId is required') as never)
     return
   }
+  if (props.category === 'document' && props.fileTypeCode === 'MAINTENANCE_REPORT' && !props.maintenanceId) {
+    ElMessage.error('请先保存维修工单后再上传报告')
+    options.onError?.(new Error('maintenanceId is required') as never)
+    return
+  }
 
   uploading.value = true
   try {
     const result = await uploadFileApi(options.file as File, {
       deviceId: props.deviceId,
+      maintenanceId: props.maintenanceId,
       category: props.category,
       fileTypeCode: props.fileTypeCode
     })

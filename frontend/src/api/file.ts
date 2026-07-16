@@ -9,6 +9,7 @@ export function uploadFileApi(
     deviceId: number
     category: FileCategory
     fileTypeCode?: string
+    maintenanceId?: number
   }
 ) {
   const formData = new FormData()
@@ -18,6 +19,9 @@ export function uploadFileApi(
   if (params.fileTypeCode) {
     formData.append('fileTypeCode', params.fileTypeCode)
   }
+  if (params.maintenanceId) {
+    formData.append('maintenanceId', String(params.maintenanceId))
+  }
   return http.post<FileMeta, FileMeta>('/file/upload', formData, {
     timeout: 120000
   })
@@ -25,6 +29,10 @@ export function uploadFileApi(
 
 export function listDeviceFilesApi(deviceId: number) {
   return http.get<FileMeta[], FileMeta[]>(`/file/list/${deviceId}`)
+}
+
+export function listMaintenanceFilesApi(maintenanceId: number) {
+  return http.get<FileMeta[], FileMeta[]>(`/file/list/maintenance/${maintenanceId}`)
 }
 
 export function deleteFileApi(fileId: number) {

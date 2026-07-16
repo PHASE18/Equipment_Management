@@ -11,11 +11,15 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @RequireAuth
@@ -30,6 +34,11 @@ public class SysUserRoleController {
                                                 @RequestParam(required = false) Long userId,
                                                 @RequestParam(required = false) Long roleId) {
         return Result.success(sysUserRoleService.pageQuery(query, userId, roleId));
+    }
+
+    @GetMapping("/by-user/{userId}")
+    public Result<List<Long>> listRoleIdsByUser(@PathVariable Long userId) {
+        return Result.success(sysUserRoleService.listRoleIdsByUserId(userId));
     }
 
     @PostMapping("/bind")

@@ -3,6 +3,7 @@ export type FileCategory = 'image' | 'document' | 'excel' | 'contract'
 export interface FileMeta {
   fileId: number
   deviceId: number
+  maintenanceId?: number
   fileName: string
   fileTypeCode: string
   category?: FileCategory

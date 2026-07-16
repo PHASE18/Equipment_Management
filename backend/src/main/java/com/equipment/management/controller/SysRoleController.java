@@ -1,6 +1,7 @@
 package com.equipment.management.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.equipment.management.annotation.CrudPermission;
 import com.equipment.management.annotation.RequireAuth;
 import com.equipment.management.common.controller.BaseCrudController;
 import com.equipment.management.common.query.PageQuery;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequireAuth
+@CrudPermission(module = "system:role")
 @RequestMapping("/api/role")
 public class SysRoleController extends BaseCrudController<SysRoleService, SysRole> {
 

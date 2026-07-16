@@ -35,8 +35,9 @@ public class FileController {
             @RequestParam("file") MultipartFile file,
             @RequestParam("deviceId") Long deviceId,
             @RequestParam(value = "category", defaultValue = "document") String category,
-            @RequestParam(value = "fileTypeCode", required = false) String fileTypeCode) {
-        return Result.success(fileService.upload(file, deviceId, category, fileTypeCode));
+            @RequestParam(value = "fileTypeCode", required = false) String fileTypeCode,
+            @RequestParam(value = "maintenanceId", required = false) Long maintenanceId) {
+        return Result.success(fileService.upload(file, deviceId, maintenanceId, category, fileTypeCode));
     }
 
     @RequirePermission("attachment:download")
@@ -50,6 +51,11 @@ public class FileController {
     public Result<Void> delete(@PathVariable Long id) {
         fileService.delete(id);
         return Result.success();
+    }
+
+    @GetMapping("/list/maintenance/{maintenanceId}")
+    public Result<List<FileUploadResponse>> listByMaintenance(@PathVariable Long maintenanceId) {
+        return Result.success(fileService.listByMaintenanceId(maintenanceId));
     }
 
     @RequirePermission("attachment:download")

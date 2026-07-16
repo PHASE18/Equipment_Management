@@ -10,4 +10,5 @@ public class MaintenanceQuery extends PageQuery {
 
     private Long deviceId;
     private String faultType;
+    private Integer isResolved;
 }

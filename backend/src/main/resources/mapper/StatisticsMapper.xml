@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.equipment.management.mapper.StatisticsMapper">
+
+    <!-- 设备统计公共过滤条件 -->
+    <sql id="deviceFilter">
+        d.deleted = 0
+        <if test="departmentId != null">
+            AND d.department_id = #{departmentId}
+        </if>
+        <if test="brandCode != null and brandCode != ''">
+            AND d.brand_code = #{brandCode}
+        </if>
+        <if test="deviceTypeCode != null and deviceTypeCode != ''">
+            AND d.device_type_code = #{deviceTypeCode}
+        </if>
+        <if test="startDate != null">
+            AND d.create_time &gt;= #{startDate}
+        </if>
+        <if test="endDate != null">
+            AND d.create_time &lt; DATE_ADD(#{endDate}, INTERVAL 1 DAY)
+        </if>
+        <if test="!allScope and scopeDepartmentId != null">
+            AND d.department_id = #{scopeDepartmentId}
+        </if>
+        <if test="!allScope and scopeUserId != null">
+            AND d.manager_user_id = #{scopeUserId}
+        </if>
+        <if test="projectId != null">
+            AND EXISTS (
+                SELECT 1 FROM device_project dp
+                WHERE dp.device_id = d.id AND dp.project_id = #{projectId}
+            )
+        </if>
+    </sql>
+
+    <!-- 维修记录公共过滤（关联设备） -->
+    <sql id="maintenanceFilter">
+        m.deleted = 0
+        AND d.deleted = 0
+        <if test="departmentId != null">
+            AND d.department_id = #{departmentId}
+        </if>
+        <if test="brandCode != null and brandCode != ''">
+            AND d.brand_code = #{brandCode}
+        </if>
+        <if test="deviceTypeCode != null and deviceTypeCode != ''">
+            AND d.device_type_code = #{deviceTypeCode}
+        </if>
+        <if test="startDate != null">
+            AND m.maintenance_date &gt;= #{startDate}
+        </if>
+        <if test="endDate != null">
+            AND m.maintenance_date &lt;= #{endDate}
+        </if>
+        <if test="!allScope and scopeDepartmentId != null">
+            AND d.department_id = #{scopeDepartmentId}
+        </if>
+        <if test="!allScope and scopeUserId != null">
+            AND d.manager_user_id = #{scopeUserId}
+        </if>
+        <if test="projectId != null">
+            AND EXISTS (
+                SELECT 1 FROM device_project dp
+                WHERE dp.device_id = d.id AND dp.project_id = #{projectId}
+            )
+        </if>
+    </sql>
+
+    <!-- 首页统计卡片 -->
+    <select id="selectDeviceSummary" resultType="map">
+        SELECT
+            COUNT(*) AS deviceTotal,
+            SUM(CASE WHEN d.status_code = 'IN_USE' THEN 1 ELSE 0 END) AS inUseCount,
+            SUM(CASE WHEN d.status_code = 'MAINTAINING' THEN 1 ELSE 0 END) AS maintainingCount,
+            SUM(CASE WHEN d.status_code = 'STOPPED' THEN 1 ELSE 0 END) AS stoppedCount,
+            SUM(CASE WHEN d.status_code = 'SCRAPPED' THEN 1 ELSE 0 END) AS scrappedCount,
+            SUM(CASE WHEN d.warranty_end BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 30 DAY) THEN 1 ELSE 0 END) AS warrantyExpiringCount,
+            SUM(CASE WHEN d.create_time &gt;= DATE_FORMAT(CURDATE(), '%Y-%m-01') THEN 1 ELSE 0 END) AS monthNewDeviceCount
+        FROM device d
+        WHERE <include refid="deviceFilter"/>
+    </select>
+
+    <select id="selectMonthMaintenanceCount" resultType="long">
+        SELECT COUNT(*)
+        FROM device_maintenance m
+        INNER JOIN device d ON m.device_id = d.id
+        WHERE <include refid="maintenanceFilter"/>
+          AND m.maintenance_date &gt;= DATE_FORMAT(CURDATE(), '%Y-%m-01')
+    </select>
+
+    <!-- 设备状态分布 -->
+    <select id="selectStatusDistribution" resultType="map">
+        SELECT
+            d.status_code AS code,
+            COALESCE(dict.dict_name, d.status_code) AS name,
+            COUNT(*) AS value
+        FROM device d
+        LEFT JOIN sys_dict dict ON dict.dict_type = 'device_status'
+            AND dict.dict_code = d.status_code AND dict.deleted = 0
+        WHERE <include refid="deviceFilter"/>
+        GROUP BY d.status_code, dict.dict_name
+        ORDER BY value DESC
+    </select>
+
+    <!-- 品牌分布 -->
+    <select id="selectBrandDistribution" resultType="map">
+        SELECT
+            d.brand_code AS code,
+            COALESCE(dict.dict_name, d.brand_code, '未分类') AS name,
+            COUNT(*) AS value
+        FROM device d
+        LEFT JOIN sys_dict dict ON dict.dict_type = 'device_brand'
+            AND dict.dict_code = d.brand_code AND dict.deleted = 0
+        WHERE <include refid="deviceFilter"/>
+        GROUP BY d.brand_code, dict.dict_name
+        ORDER BY value DESC
+    </select>
+
+    <!-- 设备类型分布 -->
+    <select id="selectTypeDistribution" resultType="map">
+        SELECT
+            d.device_type_code AS code,
+            COALESCE(dict.dict_name, d.device_type_code, '未分类') AS name,
+            COUNT(*) AS value
+        FROM device d
+        LEFT JOIN sys_dict dict ON dict.dict_type = 'device_type'
+            AND dict.dict_code = d.device_type_code AND dict.deleted = 0
+        WHERE <include refid="deviceFilter"/>
+        GROUP BY d.device_type_code, dict.dict_name
+        ORDER BY value DESC
+    </select>
+
+    <!-- 部门设备统计 -->
+    <select id="selectDepartmentDistribution" resultType="map">
+        SELECT
+            CAST(d.department_id AS CHAR) AS code,
+            COALESCE(dept.department_name, '未分配') AS name,
+            COUNT(*) AS value
+        FROM device d
+        LEFT JOIN sys_department dept ON dept.id = d.department_id AND dept.deleted = 0
+        WHERE <include refid="deviceFilter"/>
+        GROUP BY d.department_id, dept.department_name
+        ORDER BY value DESC
+    </select>
+
+    <!-- 项目设备统计 -->
+    <select id="selectProjectDistribution" resultType="map">
+        SELECT
+            CAST(p.id AS CHAR) AS code,
+            p.project_name AS name,
+            COUNT(DISTINCT d.id) AS value
+        FROM project p
+        INNER JOIN device_project dp ON dp.project_id = p.id
+        INNER JOIN device d ON d.id = dp.device_id
+        WHERE p.deleted = 0 AND <include refid="deviceFilter"/>
+        GROUP BY p.id, p.project_name
+        ORDER BY value DESC
+    </select>
+
+    <!-- 故障类型统计 -->
+    <select id="selectFaultDistribution" resultType="map">
+        SELECT
+            m.fault_type_code AS code,
+            COALESCE(dict.dict_name, m.fault_type_code, '未分类') AS name,
+            COUNT(*) AS value
+        FROM device_maintenance m
+        INNER JOIN device d ON m.device_id = d.id
+        LEFT JOIN sys_dict dict ON dict.dict_type = 'fault_type'
+            AND dict.dict_code = m.fault_type_code AND dict.deleted = 0
+        WHERE <include refid="maintenanceFilter"/>
+          AND m.fault_type_code IS NOT NULL AND m.fault_type_code != ''
+        GROUP BY m.fault_type_code, dict.dict_name
+        ORDER BY value DESC
+    </select>
+
+    <!-- 维修次数趋势（近6个月） -->
+    <select id="selectMaintenanceTrend" resultType="map">
+        SELECT
+            DATE_FORMAT(m.maintenance_date, '%Y-%m') AS name,
+            DATE_FORMAT(m.maintenance_date, '%Y-%m') AS code,
+            COUNT(*) AS value
+        FROM device_maintenance m
+        INNER JOIN device d ON m.device_id = d.id
+        WHERE <include refid="maintenanceFilter"/>
+          AND m.maintenance_date &gt;= DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 5 MONTH), '%Y-%m-01')
+        GROUP BY DATE_FORMAT(m.maintenance_date, '%Y-%m')
+        ORDER BY name ASC
+    </select>
+
+    <!-- 维修费用统计（近6个月） -->
+    <select id="selectMaintenanceCostTrend" resultType="map">
+        SELECT
+            DATE_FORMAT(m.maintenance_date, '%Y-%m') AS name,
+            DATE_FORMAT(m.maintenance_date, '%Y-%m') AS code,
+            COUNT(*) AS value,
+            COALESCE(SUM(m.maintenance_cost), 0) AS amount
+        FROM device_maintenance m
+        INNER JOIN device d ON m.device_id = d.id
+        WHERE <include refid="maintenanceFilter"/>
+          AND m.maintenance_date &gt;= DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 5 MONTH), '%Y-%m-01')
+        GROUP BY DATE_FORMAT(m.maintenance_date, '%Y-%m')
+        ORDER BY name ASC
+    </select>
+
+    <!-- 到保设备统计（未来3个月按月） -->
+    <select id="selectWarrantyDistribution" resultType="map">
+        SELECT
+            DATE_FORMAT(d.warranty_end, '%Y-%m') AS name,
+            DATE_FORMAT(d.warranty_end, '%Y-%m') AS code,
+            COUNT(*) AS value
+        FROM device d
+        WHERE <include refid="deviceFilter"/>
+          AND d.warranty_end IS NOT NULL
+          AND d.warranty_end BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 3 MONTH)
+        GROUP BY DATE_FORMAT(d.warranty_end, '%Y-%m')
+        ORDER BY name ASC
+    </select>
+
+</mapper>
