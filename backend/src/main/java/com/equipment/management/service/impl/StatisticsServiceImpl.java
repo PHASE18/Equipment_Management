@@ -38,6 +38,10 @@ public class StatisticsServiceImpl implements StatisticsService {
                 .maintenanceTrendChart(toChartItems(statisticsMapper.selectMaintenanceTrend(filter)))
                 .maintenanceCostChart(toChartItems(statisticsMapper.selectMaintenanceCostTrend(filter)))
                 .warrantyChart(toChartItems(statisticsMapper.selectWarrantyDistribution(filter)))
+                .supplierChart(toChartItems(statisticsMapper.selectSupplierDistribution(filter)))
+                .maintenanceCompanyChart(toChartItems(statisticsMapper.selectMaintenanceCompanyDistribution(filter)))
+                .modelChart(toChartItems(statisticsMapper.selectModelRanking(filter)))
+                .scrapChart(toChartItems(statisticsMapper.selectScrapDistribution(filter)))
                 .build();
     }
 
@@ -107,15 +111,36 @@ public class StatisticsServiceImpl implements StatisticsService {
         return statisticsMapper.selectWarrantyDistribution(StatisticsFilterBuilder.from(query));
     }
 
+    @Override
+    public List<Map<String, Object>> supplierStatistics(StatisticsQuery query) {
+        return statisticsMapper.selectSupplierDistribution(StatisticsFilterBuilder.from(query));
+    }
+
+    @Override
+    public List<Map<String, Object>> maintenanceCompanyStatistics(StatisticsQuery query) {
+        return statisticsMapper.selectMaintenanceCompanyDistribution(StatisticsFilterBuilder.from(query));
+    }
+
+    @Override
+    public List<Map<String, Object>> modelStatistics(StatisticsQuery query) {
+        return statisticsMapper.selectModelRanking(StatisticsFilterBuilder.from(query));
+    }
+
+    @Override
+    public List<Map<String, Object>> scrapStatistics(StatisticsQuery query) {
+        return statisticsMapper.selectScrapDistribution(StatisticsFilterBuilder.from(query));
+    }
+
     private DashboardResponse.DashboardSummary buildSummary(Map<String, Object> summaryMap, Long monthMaintenanceCount) {
+        Map<String, Object> safeMap = summaryMap != null ? summaryMap : Collections.emptyMap();
         return DashboardResponse.DashboardSummary.builder()
-                .deviceTotal(toLong(summaryMap.get("deviceTotal")))
-                .inUseCount(toLong(summaryMap.get("inUseCount")))
-                .maintainingCount(toLong(summaryMap.get("maintainingCount")))
-                .stoppedCount(toLong(summaryMap.get("stoppedCount")))
-                .scrappedCount(toLong(summaryMap.get("scrappedCount")))
-                .warrantyExpiringCount(toLong(summaryMap.get("warrantyExpiringCount")))
-                .monthNewDeviceCount(toLong(summaryMap.get("monthNewDeviceCount")))
+                .deviceTotal(toLong(safeMap.get("deviceTotal")))
+                .inUseCount(toLong(safeMap.get("inUseCount")))
+                .maintainingCount(toLong(safeMap.get("maintainingCount")))
+                .stoppedCount(toLong(safeMap.get("stoppedCount")))
+                .scrappedCount(toLong(safeMap.get("scrappedCount")))
+                .warrantyExpiringCount(toLong(safeMap.get("warrantyExpiringCount")))
+                .monthNewDeviceCount(toLong(safeMap.get("monthNewDeviceCount")))
                 .monthMaintenanceCount(monthMaintenanceCount != null ? monthMaintenanceCount : 0L)
                 .build();
     }

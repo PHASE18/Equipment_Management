@@ -36,4 +36,8 @@ export interface DashboardData {
   maintenanceTrendChart: ChartItem[]
   maintenanceCostChart: ChartItem[]
   warrantyChart: ChartItem[]
+  supplierChart?: ChartItem[]
+  maintenanceCompanyChart?: ChartItem[]
+  modelChart?: ChartItem[]
+  scrapChart?: ChartItem[]
 }

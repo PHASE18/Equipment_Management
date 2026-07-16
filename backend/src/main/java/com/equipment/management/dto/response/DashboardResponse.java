@@ -21,6 +21,10 @@ public class DashboardResponse {
     private List<ChartItem> maintenanceTrendChart;
     private List<ChartItem> maintenanceCostChart;
     private List<ChartItem> warrantyChart;
+    private List<ChartItem> supplierChart;
+    private List<ChartItem> maintenanceCompanyChart;
+    private List<ChartItem> modelChart;
+    private List<ChartItem> scrapChart;
 
     @Data
     @Builder

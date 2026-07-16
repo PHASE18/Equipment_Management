@@ -17,7 +17,7 @@ import java.util.Map;
 
 @RestController
 @RequireAuth
-@RequirePermission("log:view")
+@RequirePermission(any = {"log:view", "log:list"})
 @RequestMapping("/api/log")
 @RequiredArgsConstructor
 public class LogController {

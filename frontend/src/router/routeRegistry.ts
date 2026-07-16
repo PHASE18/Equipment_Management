@@ -20,6 +20,12 @@ export const routeRegistry: Record<string, RouteRegistryItem> = {
     title: '首页统计',
     component: () => import('@/views/dashboard/DashboardView.vue')
   },
+  'statistics:view': {
+    name: 'Statistics',
+    path: '/statistics',
+    title: '统计分析',
+    component: () => import('@/views/dashboard/DashboardView.vue')
+  },
   'system:user': {
     name: 'SystemUser',
     path: '/system/users',
@@ -61,5 +67,23 @@ export const routeRegistry: Record<string, RouteRegistryItem> = {
     path: '/maintenance',
     title: '维修管理',
     component: () => import('@/views/maintenance/MaintenanceListView.vue')
+  },
+  'project:list': {
+    name: 'ProjectList',
+    path: '/projects',
+    title: '项目管理',
+    component: () => import('@/views/project/ProjectListView.vue')
+  },
+  'log:list': {
+    name: 'AuditLogList',
+    path: '/audit-logs',
+    title: '日志审计',
+    component: () => import('@/views/audit/AuditLogListView.vue')
+  },
+  'attachment:list': {
+    name: 'AttachmentList',
+    path: '/attachments',
+    title: '附件管理',
+    component: () => import('@/views/attachment/AttachmentListView.vue')
   }
 }

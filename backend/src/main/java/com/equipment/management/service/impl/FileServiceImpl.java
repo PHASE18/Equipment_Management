@@ -27,6 +27,7 @@ import java.io.OutputStream;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -140,6 +141,20 @@ public class FileServiceImpl implements FileService {
                 .stream()
                 .map(item -> toResponse(item, null))
                 .toList();
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public List<FileUploadResponse> batchUpload(MultipartFile[] files, Long deviceId, Long maintenanceId,
+                                                String category, String fileTypeCode) {
+        if (files == null || files.length == 0) {
+            throw new BusinessException(ErrorCode.BAD_REQUEST, "上传文件不能为空");
+        }
+        List<FileUploadResponse> results = new ArrayList<>();
+        for (MultipartFile file : files) {
+            results.add(upload(file, deviceId, maintenanceId, category, fileTypeCode));
+        }
+        return results;
     }
 
     private DeviceAttachment getAttachmentOrThrow(Long id) {

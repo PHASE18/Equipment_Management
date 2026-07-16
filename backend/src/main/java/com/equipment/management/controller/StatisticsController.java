@@ -82,4 +82,24 @@ public class StatisticsController {
     public Result<List<Map<String, Object>>> warranty(StatisticsQuery query) {
         return Result.success(statisticsService.warrantyStatistics(query));
     }
+
+    @GetMapping("/supplier")
+    public Result<List<Map<String, Object>>> supplier(StatisticsQuery query) {
+        return Result.success(statisticsService.supplierStatistics(query));
+    }
+
+    @GetMapping("/maintenance-company")
+    public Result<List<Map<String, Object>>> maintenanceCompany(StatisticsQuery query) {
+        return Result.success(statisticsService.maintenanceCompanyStatistics(query));
+    }
+
+    @GetMapping("/model")
+    public Result<List<Map<String, Object>>> model(StatisticsQuery query) {
+        return Result.success(statisticsService.modelStatistics(query));
+    }
+
+    @GetMapping("/scrap")
+    public Result<List<Map<String, Object>>> scrap(StatisticsQuery query) {
+        return Result.success(statisticsService.scrapStatistics(query));
+    }
 }

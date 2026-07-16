@@ -218,4 +218,55 @@
         ORDER BY name ASC
     </select>
 
+    <!-- 供应商统计 -->
+    <select id="selectSupplierDistribution" resultType="map">
+        SELECT
+            COALESCE(NULLIF(TRIM(d.supplier), ''), '未填写') AS code,
+            COALESCE(NULLIF(TRIM(d.supplier), ''), '未填写') AS name,
+            COUNT(*) AS value
+        FROM device d
+        WHERE <include refid="deviceFilter"/>
+        GROUP BY COALESCE(NULLIF(TRIM(d.supplier), ''), '未填写')
+        ORDER BY value DESC
+    </select>
+
+    <!-- 维保单位统计 -->
+    <select id="selectMaintenanceCompanyDistribution" resultType="map">
+        SELECT
+            COALESCE(NULLIF(TRIM(d.maintenance_company), ''), '未填写') AS code,
+            COALESCE(NULLIF(TRIM(d.maintenance_company), ''), '未填写') AS name,
+            COUNT(*) AS value
+        FROM device d
+        WHERE <include refid="deviceFilter"/>
+        GROUP BY COALESCE(NULLIF(TRIM(d.maintenance_company), ''), '未填写')
+        ORDER BY value DESC
+    </select>
+
+    <!-- 设备型号排行 -->
+    <select id="selectModelRanking" resultType="map">
+        SELECT
+            COALESCE(NULLIF(TRIM(d.model), ''), '未填写') AS code,
+            COALESCE(NULLIF(TRIM(d.model), ''), '未填写') AS name,
+            COUNT(*) AS value
+        FROM device d
+        WHERE <include refid="deviceFilter"/>
+        GROUP BY COALESCE(NULLIF(TRIM(d.model), ''), '未填写')
+        ORDER BY value DESC
+        LIMIT 20
+    </select>
+
+    <!-- 报废统计（近12个月按月） -->
+    <select id="selectScrapDistribution" resultType="map">
+        SELECT
+            DATE_FORMAT(d.update_time, '%Y-%m') AS name,
+            DATE_FORMAT(d.update_time, '%Y-%m') AS code,
+            COUNT(*) AS value
+        FROM device d
+        WHERE <include refid="deviceFilter"/>
+          AND d.status_code = 'SCRAPPED'
+          AND d.update_time &gt;= DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 11 MONTH), '%Y-%m-01')
+        GROUP BY DATE_FORMAT(d.update_time, '%Y-%m')
+        ORDER BY name ASC
+    </select>
+
 </mapper>

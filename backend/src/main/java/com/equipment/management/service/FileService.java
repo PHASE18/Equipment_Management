@@ -19,4 +19,7 @@ public interface FileService {
     List<FileUploadResponse> listByDeviceId(Long deviceId);
 
     List<FileUploadResponse> listByMaintenanceId(Long maintenanceId);
+
+    List<FileUploadResponse> batchUpload(MultipartFile[] files, Long deviceId, Long maintenanceId,
+                                         String category, String fileTypeCode);
 }

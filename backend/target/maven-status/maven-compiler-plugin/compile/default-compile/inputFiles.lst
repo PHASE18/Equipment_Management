@@ -189,6 +189,7 @@ E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\c
 E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\com\equipment\management\config\MybatisMetaObjectHandler.java
 E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\com\equipment\management\config\MinioProperties.java
 E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\com\equipment\management\service\SysConfigService.java
+E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\com\equipment\management\config\FileStorageProperties.java
 E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\com\equipment\management\annotation\RequireAuth.java
 E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\com\equipment\management\dto\request\LoginRequest.java
 E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\com\equipment\management\service\DeviceStatusService.java

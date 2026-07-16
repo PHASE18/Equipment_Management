@@ -20,6 +20,10 @@ public class SysLoginLogServiceImpl extends ServiceImpl<SysLoginLogMapper, SysLo
 
     @Override
     public PageResult<SysLoginLog> pageQuery(LogQuery query) {
+        // 登录日志表无 create_time，避免 PageQuery 默认排序字段导致 SQL 报错
+        if (!StringUtils.hasText(query.getSortField()) || "createTime".equals(query.getSortField())) {
+            query.setSortField("loginTime");
+        }
         LambdaQueryWrapper<SysLoginLog> wrapper = Wrappers.lambdaQuery();
         wrapper.like(StringUtils.hasText(query.getUsername()), SysLoginLog::getUsername, query.getUsername())
                 .orderByDesc(SysLoginLog::getLoginTime);
@@ -37,8 +41,7 @@ public class SysLoginLogServiceImpl extends ServiceImpl<SysLoginLogMapper, SysLo
 
     @Override
     public void removeLog(Long id) {
-        if (!removeById(id)) {
-            throw new BusinessException(ErrorCode.NOT_FOUND);
-        }
+        // 日志永久留存，禁止删除
+        throw new BusinessException(ErrorCode.FORBIDDEN, "日志禁止删除");
     }
 }

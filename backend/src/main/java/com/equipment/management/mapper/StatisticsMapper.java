@@ -30,4 +30,12 @@ public interface StatisticsMapper {
     List<Map<String, Object>> selectMaintenanceCostTrend(StatisticsFilter filter);
 
     List<Map<String, Object>> selectWarrantyDistribution(StatisticsFilter filter);
+
+    List<Map<String, Object>> selectSupplierDistribution(StatisticsFilter filter);
+
+    List<Map<String, Object>> selectMaintenanceCompanyDistribution(StatisticsFilter filter);
+
+    List<Map<String, Object>> selectModelRanking(StatisticsFilter filter);
+
+    List<Map<String, Object>> selectScrapDistribution(StatisticsFilter filter);
 }

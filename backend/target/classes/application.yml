@@ -42,6 +42,9 @@ minio:
   bucket: equipment
 
 file:
+  # 开发默认 local；生产请改为 minio
+  storage: local
+  local-base-dir: uploads
   upload:
     allowed-extensions: jpg,jpeg,png,gif,webp,bmp,pdf,doc,docx,txt,xls,xlsx
     max-size: 52428800

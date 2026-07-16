@@ -38,8 +38,7 @@ public class SysOperationLogServiceImpl extends ServiceImpl<SysOperationLogMappe
 
     @Override
     public void removeLog(Long id) {
-        if (!removeById(id)) {
-            throw new BusinessException(ErrorCode.NOT_FOUND);
-        }
+        // 日志永久留存，禁止删除
+        throw new BusinessException(ErrorCode.FORBIDDEN, "日志禁止删除");
     }
 }

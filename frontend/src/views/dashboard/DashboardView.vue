@@ -128,6 +128,39 @@ const warrantyOption = computed(() =>
   )
 )
 
+const supplierOption = computed(() =>
+  barOption(
+    '供应商统计',
+    dashboard.value?.supplierChart?.map(i => i.name || '-') || [],
+    dashboard.value?.supplierChart?.map(i => i.value) || []
+  )
+)
+
+const maintenanceCompanyOption = computed(() =>
+  barOption(
+    '维保单位统计',
+    dashboard.value?.maintenanceCompanyChart?.map(i => i.name || '-') || [],
+    dashboard.value?.maintenanceCompanyChart?.map(i => i.value) || []
+  )
+)
+
+const modelOption = computed(() =>
+  barOption(
+    '设备型号排行',
+    dashboard.value?.modelChart?.map(i => i.name || '-') || [],
+    dashboard.value?.modelChart?.map(i => i.value) || [],
+    true
+  )
+)
+
+const scrapOption = computed(() =>
+  lineOption(
+    '报废统计',
+    dashboard.value?.scrapChart?.map(i => i.name || '-') || [],
+    dashboard.value?.scrapChart?.map(i => i.value) || []
+  )
+)
+
 async function loadFilterOptions() {
   const [deptList, projectPage, brandPage, typePage] = await Promise.all([
     departmentApi.tree(),
@@ -177,12 +210,13 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div v-loading="loading" class="dashboard-page">
-    <el-card shadow="never" class="filter-card">
+  <div v-loading="loading" class="dashboard-page" data-testid="statistics-page">
+    <el-card shadow="never" class="filter-card" data-testid="statistics-filter">
       <el-form :inline="true" @submit.prevent="handleSearch">
         <el-form-item label="部门">
           <el-tree-select
             v-model="query.departmentId"
+            data-testid="statistics-dept-filter"
             :data="departmentOptions"
             check-strictly
             clearable
@@ -192,7 +226,14 @@ onMounted(async () => {
           />
         </el-form-item>
         <el-form-item label="项目">
-          <el-select v-model="query.projectId" clearable filterable placeholder="全部" style="width: 160px">
+          <el-select
+            v-model="query.projectId"
+            data-testid="statistics-project-filter"
+            clearable
+            filterable
+            placeholder="全部"
+            style="width: 160px"
+          >
             <el-option
               v-for="item in projects"
               :key="item.id"
@@ -202,18 +243,33 @@ onMounted(async () => {
           </el-select>
         </el-form-item>
         <el-form-item label="品牌">
-          <el-select v-model="query.brandCode" clearable filterable placeholder="全部" style="width: 140px">
+          <el-select
+            v-model="query.brandCode"
+            data-testid="statistics-brand-filter"
+            clearable
+            filterable
+            placeholder="全部"
+            style="width: 140px"
+          >
             <el-option v-for="item in brands" :key="item.dictCode" :label="item.dictName" :value="item.dictCode" />
           </el-select>
         </el-form-item>
         <el-form-item label="设备类型">
-          <el-select v-model="query.deviceTypeCode" clearable filterable placeholder="全部" style="width: 140px">
+          <el-select
+            v-model="query.deviceTypeCode"
+            data-testid="statistics-type-filter"
+            clearable
+            filterable
+            placeholder="全部"
+            style="width: 140px"
+          >
             <el-option v-for="item in deviceTypes" :key="item.dictCode" :label="item.dictName" :value="item.dictCode" />
           </el-select>
         </el-form-item>
         <el-form-item label="时间范围">
           <el-date-picker
             v-model="query.startDate"
+            data-testid="statistics-start-date"
             type="date"
             value-format="YYYY-MM-DD"
             placeholder="开始日期"
@@ -222,6 +278,7 @@ onMounted(async () => {
           <span class="date-sep">至</span>
           <el-date-picker
             v-model="query.endDate"
+            data-testid="statistics-end-date"
             type="date"
             value-format="YYYY-MM-DD"
             placeholder="结束日期"
@@ -229,27 +286,33 @@ onMounted(async () => {
           />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="handleSearch">查询</el-button>
-          <el-button @click="resetQuery">重置</el-button>
+          <el-button data-testid="statistics-search-btn" type="primary" @click="handleSearch">查询</el-button>
+          <el-button data-testid="statistics-reset-btn" @click="resetQuery">重置</el-button>
         </el-form-item>
       </el-form>
     </el-card>
 
-    <div class="summary-grid">
-      <el-card v-for="item in summaryCards" :key="item.label" shadow="hover" class="summary-card">
+    <div class="summary-grid" data-testid="statistics-summary">
+      <el-card
+        v-for="item in summaryCards"
+        :key="item.label"
+        :data-testid="`statistics-card-${item.label}`"
+        shadow="hover"
+        class="summary-card"
+      >
         <div class="summary-value" :style="{ color: item.color }">{{ item.value }}</div>
         <div class="summary-label">{{ item.label }}</div>
       </el-card>
     </div>
 
-    <el-row :gutter="16" class="chart-row">
+    <el-row :gutter="16" class="chart-row" data-testid="statistics-charts">
       <el-col :span="12">
-        <el-card shadow="never" class="chart-card">
+        <el-card shadow="never" class="chart-card" data-testid="statistics-chart-status">
           <DashboardChartCard :option="statusOption" />
         </el-card>
       </el-col>
       <el-col :span="12">
-        <el-card shadow="never" class="chart-card">
+        <el-card shadow="never" class="chart-card" data-testid="statistics-chart-fault">
           <DashboardChartCard :option="faultOption" />
         </el-card>
       </el-col>
@@ -284,8 +347,28 @@ onMounted(async () => {
         </el-card>
       </el-col>
       <el-col :span="24">
-        <el-card shadow="never" class="chart-card">
+        <el-card shadow="never" class="chart-card" data-testid="statistics-chart-warranty">
           <DashboardChartCard :option="warrantyOption" height="280px" />
+        </el-card>
+      </el-col>
+      <el-col :span="12">
+        <el-card shadow="never" class="chart-card" data-testid="statistics-chart-supplier">
+          <DashboardChartCard :option="supplierOption" />
+        </el-card>
+      </el-col>
+      <el-col :span="12">
+        <el-card shadow="never" class="chart-card" data-testid="statistics-chart-maintenance-company">
+          <DashboardChartCard :option="maintenanceCompanyOption" />
+        </el-card>
+      </el-col>
+      <el-col :span="12">
+        <el-card shadow="never" class="chart-card" data-testid="statistics-chart-model">
+          <DashboardChartCard :option="modelOption" />
+        </el-card>
+      </el-col>
+      <el-col :span="12">
+        <el-card shadow="never" class="chart-card" data-testid="statistics-chart-scrap">
+          <DashboardChartCard :option="scrapOption" />
         </el-card>
       </el-col>
     </el-row>

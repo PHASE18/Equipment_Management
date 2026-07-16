@@ -31,4 +31,12 @@ public interface StatisticsService {
     List<Map<String, Object>> maintenanceTrend(StatisticsQuery query);
 
     List<Map<String, Object>> warrantyStatistics(StatisticsQuery query);
+
+    List<Map<String, Object>> supplierStatistics(StatisticsQuery query);
+
+    List<Map<String, Object>> maintenanceCompanyStatistics(StatisticsQuery query);
+
+    List<Map<String, Object>> modelStatistics(StatisticsQuery query);
+
+    List<Map<String, Object>> scrapStatistics(StatisticsQuery query);
 }

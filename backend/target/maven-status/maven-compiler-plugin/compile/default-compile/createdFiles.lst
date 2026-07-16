@@ -71,6 +71,7 @@ com\equipment\management\service\impl\DeviceProjectServiceImpl.class
 com\equipment\management\entity\DeviceStatusLog.class
 com\equipment\management\common\controller\TypedDictCrudController.class
 com\equipment\management\annotation\Anonymous.class
+com\equipment\management\config\FileStorageProperties.class
 com\equipment\management\common\permission\DataPermissionRule.class
 com\equipment\management\service\impl\DeviceConfigServiceImpl.class
 com\equipment\management\common\constant\DictTypeConstants.class

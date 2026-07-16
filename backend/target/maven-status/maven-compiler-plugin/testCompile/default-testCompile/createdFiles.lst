@@ -1,0 +1,8 @@
+com\equipment\management\service\impl\StatisticsServiceImplTest.class
+com\equipment\management\common\util\FileUploadValidatorTest.class
+com\equipment\management\service\impl\ProjectServiceImplTest.class
+com\equipment\management\service\impl\LogAuditServiceTest$RemoveForbiddenTests.class
+com\equipment\management\service\impl\DeviceProjectServiceImplTest.class
+com\equipment\management\service\impl\FileServiceImplTest.class
+com\equipment\management\service\impl\LogAuditServiceTest.class
+com\equipment\management\service\impl\StatisticsServiceImplTest$FilterBuilderTests.class

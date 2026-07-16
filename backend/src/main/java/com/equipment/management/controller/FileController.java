@@ -53,14 +53,29 @@ public class FileController {
         return Result.success();
     }
 
+    @RequirePermission(any = {"attachment:list", "attachment:download"})
     @GetMapping("/list/maintenance/{maintenanceId}")
     public Result<List<FileUploadResponse>> listByMaintenance(@PathVariable Long maintenanceId) {
         return Result.success(fileService.listByMaintenanceId(maintenanceId));
     }
 
-    @RequirePermission("attachment:download")
+    @RequirePermission(any = {"attachment:list", "attachment:download"})
     @GetMapping("/list/{deviceId}")
     public Result<List<FileUploadResponse>> list(@PathVariable Long deviceId) {
         return Result.success(fileService.listByDeviceId(deviceId));
+    }
+
+    /**
+     * 批量上传：逐个校验并上传，返回成功列表。
+     */
+    @RequirePermission("attachment:upload")
+    @PostMapping("/batch-upload")
+    public Result<List<FileUploadResponse>> batchUpload(
+            @RequestParam("files") MultipartFile[] files,
+            @RequestParam("deviceId") Long deviceId,
+            @RequestParam(value = "category", defaultValue = "document") String category,
+            @RequestParam(value = "fileTypeCode", required = false) String fileTypeCode,
+            @RequestParam(value = "maintenanceId", required = false) Long maintenanceId) {
+        return Result.success(fileService.batchUpload(files, deviceId, maintenanceId, category, fileTypeCode));
     }
 }

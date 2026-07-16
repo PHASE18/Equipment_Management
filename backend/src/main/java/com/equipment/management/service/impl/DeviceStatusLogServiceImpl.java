@@ -12,6 +12,7 @@ import com.equipment.management.entity.DeviceStatusLog;
 import com.equipment.management.mapper.DeviceStatusLogMapper;
 import com.equipment.management.service.DeviceStatusLogService;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 @Service
 public class DeviceStatusLogServiceImpl extends ServiceImpl<DeviceStatusLogMapper, DeviceStatusLog>
@@ -19,6 +20,10 @@ public class DeviceStatusLogServiceImpl extends ServiceImpl<DeviceStatusLogMappe
 
     @Override
     public PageResult<DeviceStatusLog> pageQuery(LogQuery query) {
+        // 生命周期日志表无 create_time，避免 PageQuery 默认排序字段导致 SQL 报错
+        if (!StringUtils.hasText(query.getSortField()) || "createTime".equals(query.getSortField())) {
+            query.setSortField("changeTime");
+        }
         LambdaQueryWrapper<DeviceStatusLog> wrapper = Wrappers.lambdaQuery();
         wrapper.eq(query.getDeviceId() != null, DeviceStatusLog::getDeviceId, query.getDeviceId())
                 .orderByDesc(DeviceStatusLog::getChangeTime);
@@ -36,8 +41,7 @@ public class DeviceStatusLogServiceImpl extends ServiceImpl<DeviceStatusLogMappe
 
     @Override
     public void removeLog(Long id) {
-        if (!removeById(id)) {
-            throw new BusinessException(ErrorCode.NOT_FOUND);
-        }
+        // 日志永久留存，禁止删除
+        throw new BusinessException(ErrorCode.FORBIDDEN, "日志禁止删除");
     }
 }

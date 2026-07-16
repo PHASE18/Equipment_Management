@@ -23,6 +23,10 @@ public class DeviceAttachmentController extends BaseCrudController<DeviceAttachm
 
     @Override
     protected QueryWrapper<DeviceAttachment> buildQueryWrapper(PageQuery query) {
+        // 附件列表按上传时间排序，避免 PageQuery 默认 createTime 干扰
+        if (!StringUtils.hasText(query.getSortField()) || "createTime".equals(query.getSortField())) {
+            query.setSortField("uploadTime");
+        }
         QueryWrapper<DeviceAttachment> wrapper = new QueryWrapper<>();
         if (StringUtils.hasText(query.getKeyword())) {
             wrapper.like("file_name", query.getKeyword());
