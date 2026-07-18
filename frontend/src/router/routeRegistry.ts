@@ -1,5 +1,6 @@
 import type { Component } from 'vue'
 
+/** 权限编码到前端页面组件的安全映射项。 */
 export interface RouteRegistryItem {
   name: string
   path: string

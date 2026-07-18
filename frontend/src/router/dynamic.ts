@@ -5,6 +5,7 @@ import { routeRegistry } from '@/router/routeRegistry'
 
 const dynamicRouteNames = new Set<string>()
 
+/** 根据后端菜单权限动态注册布局及业务页面路由。 */
 export function setupDynamicRoutes(menus: MenuItem[]) {
   const defaultPath = menus[0]?.path || '/403'
 
@@ -44,6 +45,7 @@ export function setupDynamicRoutes(menus: MenuItem[]) {
   // }
 }
 
+/** 清理上一次登录用户注册的动态路由，防止权限在用户间残留。 */
 export function resetDynamicRoutes() {
   dynamicRouteNames.forEach(name => {
     if (router.hasRoute(name)) {
@@ -59,6 +61,7 @@ export function resetDynamicRoutes() {
   }
 }
 
+/** 将树形菜单展开为便于逐项匹配路由注册表的一维数组。 */
 function flattenMenus(menus: MenuItem[]) {
   const result: MenuItem[] = []
   menus.forEach(menu => {

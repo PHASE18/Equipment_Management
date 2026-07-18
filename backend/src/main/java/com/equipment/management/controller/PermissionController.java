@@ -19,6 +19,7 @@ import java.util.List;
 @RestController
 @RequireAuth
 @RequiredArgsConstructor
+/** 菜单树和用户权限查询接口。 */
 public class PermissionController {
 
     private final PermissionService permissionService;

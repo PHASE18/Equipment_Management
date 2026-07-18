@@ -9,6 +9,7 @@ import com.equipment.management.entity.DeviceStatusLog;
 
 import java.util.List;
 
+/** 设备生命周期状态迁移领域服务。 */
 public interface DeviceStatusService {
 
     PageResult<DeviceStatusLog> listByDeviceId(Long deviceId, PageQuery query);

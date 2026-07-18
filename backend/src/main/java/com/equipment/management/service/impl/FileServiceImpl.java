@@ -33,6 +33,7 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+/** 文件服务实现，协调上传校验、对象存储和附件元数据。 */
 public class FileServiceImpl implements FileService {
 
     private final MinioUtils minioUtils;

@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.List;
 
 @Service
+/** 设备与项目关联服务实现。 */
 public class DeviceProjectServiceImpl extends ServiceImpl<DeviceProjectMapper, DeviceProject>
         implements DeviceProjectService {
 

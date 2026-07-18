@@ -7,6 +7,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @TableName("sys_dict")
+/** 通用字典项，按字典类型维护前端下拉选项。 */
 public class SysDict extends BaseEntity {
 
     private String dictType;

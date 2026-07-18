@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// 文件上传面板：执行文件选择、类型校验、上传进度反馈和结果回传。
 import { computed, ref, watch } from 'vue'
 import { Plus } from '@element-plus/icons-vue'
 import type { UploadFile, UploadProps, UploadRequestOptions, UploadUserFile } from 'element-plus'

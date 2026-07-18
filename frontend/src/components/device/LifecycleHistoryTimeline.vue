@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// 生命周期时间线：将状态日志按时间顺序转换为可读的时间线节点。
 import { computed } from 'vue'
 import { getDeviceStatusLabel, getDeviceStatusType } from '@/types/device'
 import type { DeviceStatusLogItem } from '@/types/device'

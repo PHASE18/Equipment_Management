@@ -1,3 +1,4 @@
+/** 登录接口提交的账号凭证。 */
 export interface LoginRequest {
   username: string
   password: string

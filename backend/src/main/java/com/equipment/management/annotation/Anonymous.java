@@ -12,5 +12,6 @@ import java.lang.annotation.Target;
 @Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
+/** 标记无需登录即可访问的控制器或接口。 */
 public @interface Anonymous {
 }

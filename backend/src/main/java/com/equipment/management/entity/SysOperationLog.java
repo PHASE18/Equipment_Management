@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 
 @Data
 @TableName("sys_operation_log")
+/** 业务操作审计记录，保存请求、目标对象和变更摘要。 */
 public class SysOperationLog {
 
     @TableId(type = IdType.AUTO)

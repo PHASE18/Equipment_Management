@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequireAuth
 @CrudPermission(module = "system:role")
 @RequestMapping("/api/role")
+/** 系统角色管理和角色权限接口。 */
 public class SysRoleController extends BaseCrudController<SysRoleService, SysRole> {
 
     public SysRoleController(SysRoleService sysRoleService) {

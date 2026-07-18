@@ -1,3 +1,4 @@
+/** 登录日志、操作审计和设备状态日志接口封装。 */
 import http from '@/api/http'
 import type { PageQuery, PageResult } from '@/types/api'
 import type { DeviceStatusLog, LoginLog, OperationLog } from '@/types/log'

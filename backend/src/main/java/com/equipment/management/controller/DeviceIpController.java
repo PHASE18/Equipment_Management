@@ -22,6 +22,7 @@ import java.util.List;
 @RequireAuth
 @CrudPermission(module = "device")
 @RequestMapping("/api/ip")
+/** 设备 IP 地址的查询与维护接口。 */
 public class DeviceIpController extends BaseCrudController<DeviceIpService, DeviceIp> {
 
     public DeviceIpController(DeviceIpService deviceIpService) {

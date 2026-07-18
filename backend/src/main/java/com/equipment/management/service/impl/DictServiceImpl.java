@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
+/** 通用字典服务实现。 */
 public class DictServiceImpl extends BaseCrudServiceImpl<SysDictMapper, SysDict> implements DictService {
 
     @Override

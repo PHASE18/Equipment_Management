@@ -20,6 +20,7 @@ import java.util.Map;
 @RequirePermission(any = {"log:view", "log:list"})
 @RequestMapping("/api/log")
 @RequiredArgsConstructor
+/** 登录日志和操作日志查询接口。 */
 public class LogController {
 
     private final LogService logService;

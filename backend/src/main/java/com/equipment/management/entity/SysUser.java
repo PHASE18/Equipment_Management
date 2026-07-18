@@ -8,6 +8,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @TableName("sys_user")
+/** 系统用户及其登录、部门和启用状态信息。 */
 public class SysUser extends BaseEntity {
 
     private String username;

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
+/** 系统配置服务实现。 */
 public class SysConfigServiceImpl extends BaseCrudServiceImpl<SysConfigMapper, SysConfig> implements SysConfigService {
 
     @Override

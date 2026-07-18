@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 
 @Data
 @TableName("device_status_log")
+/** 设备生命周期状态变更历史，保留变更前后状态和操作人。 */
 public class DeviceStatusLog {
 
     @TableId(type = IdType.AUTO)

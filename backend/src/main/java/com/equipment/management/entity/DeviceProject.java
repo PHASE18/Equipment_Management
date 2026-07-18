@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 
 @Data
 @TableName("device_project")
+/** 设备与项目之间的关联实体，用于表达多对多关系。 */
 public class DeviceProject implements Serializable {
 
     @Serial

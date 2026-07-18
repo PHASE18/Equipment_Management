@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// 通用分页组件：向父页面同步当前页码、页大小和总记录数。
 const pageNum = defineModel<number>('pageNum', { required: true })
 const pageSize = defineModel<number>('pageSize', { required: true })
 

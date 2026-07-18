@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
+/** 部门树服务实现。 */
 public class SysDepartmentServiceImpl extends BaseCrudServiceImpl<SysDepartmentMapper, SysDepartment>
         implements SysDepartmentService {
 

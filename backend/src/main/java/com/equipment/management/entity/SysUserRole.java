@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 
 @Data
 @TableName("sys_user_role")
+/** 用户与角色的关联记录。 */
 public class SysUserRole implements Serializable {
 
     @Serial

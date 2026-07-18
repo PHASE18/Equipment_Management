@@ -31,6 +31,7 @@ import java.util.UUID;
 @Slf4j
 @Component
 @RequiredArgsConstructor
+/** MinIO 对象存储适配器，封装上传、下载和删除等存储操作。 */
 public class MinioUtils {
 
     private final MinioProperties properties;

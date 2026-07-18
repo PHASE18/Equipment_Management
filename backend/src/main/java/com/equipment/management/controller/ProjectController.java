@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequireAuth
 @CrudPermission(module = "project")
 @RequestMapping("/api/project")
+/** 项目基础信息查询与维护接口。 */
 public class ProjectController extends BaseCrudController<ProjectService, Project> {
 
     private final DeviceProjectService deviceProjectService;

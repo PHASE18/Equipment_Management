@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+/** 权限服务实现，负责菜单树组装和用户权限汇总。 */
 public class PermissionServiceImpl implements PermissionService {
 
     private static final int MENU_TYPE = 1;

@@ -1,3 +1,4 @@
+/** 设备维修记录和故障类型统计接口封装。 */
 import http from '@/api/http'
 import type { PageResult } from '@/types/api'
 import type { FaultTypeStat, MaintenanceQuery, MaintenanceRecord } from '@/types/maintenance'

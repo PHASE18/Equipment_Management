@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// 侧边栏菜单：渲染认证状态中的树形菜单并处理路由跳转。
 import type { MenuItem } from '@/types/auth'
 
 defineOptions({ name: 'SidebarMenu' })

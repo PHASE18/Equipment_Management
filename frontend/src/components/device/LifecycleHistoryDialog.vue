@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// 生命周期历史对话框：按设备加载状态变更记录并交给时间线组件展示。
 import { ref, watch } from 'vue'
 import LifecycleHistoryTimeline from '@/components/device/LifecycleHistoryTimeline.vue'
 import { listDeviceStatusHistoryApi } from '@/api/device'

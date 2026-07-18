@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// 设备类型字典页：维护设备类型字典项。
 import { onMounted, ref } from 'vue'
 import type { FormInstance, FormRules } from 'element-plus'
 import AppPagination from '@/components/common/AppPagination.vue'

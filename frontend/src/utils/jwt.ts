@@ -1,3 +1,4 @@
+/** 读取 JWT payload 中的过期时间；这里只解码，不负责校验签名。 */
 export function getTokenExpireAt(token: string): number | null {
   try {
     const payloadPart = token.split('.')[1]
@@ -11,6 +12,7 @@ export function getTokenExpireAt(token: string): number | null {
   }
 }
 
+/** 判断令牌是否进入前端自动刷新窗口。 */
 export function shouldRefreshToken(token: string, leadTimeMs = 5 * 60 * 1000): boolean {
   const expireAt = getTokenExpireAt(token)
   if (!expireAt) {

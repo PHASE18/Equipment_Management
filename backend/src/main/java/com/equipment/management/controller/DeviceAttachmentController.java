@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequireAuth
 @CrudPermission(module = "attachment")
 @RequestMapping("/api/attachment")
+/** 设备附件元数据的分页与维护接口。 */
 public class DeviceAttachmentController extends BaseCrudController<DeviceAttachmentService, DeviceAttachment> {
 
     public DeviceAttachmentController(DeviceAttachmentService deviceAttachmentService) {

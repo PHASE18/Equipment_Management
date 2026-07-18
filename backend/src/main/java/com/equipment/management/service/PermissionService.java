@@ -7,6 +7,7 @@ import com.equipment.management.entity.SysPermission;
 
 import java.util.List;
 
+/** 权限树、菜单和用户权限计算领域服务。 */
 public interface PermissionService {
 
     List<SysPermission> getMenuTree();

@@ -32,6 +32,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+/** 设备生命周期状态迁移服务实现。 */
 public class DeviceStatusServiceImpl implements DeviceStatusService {
 
     private final DeviceMapper deviceMapper;

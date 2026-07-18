@@ -16,6 +16,7 @@ interface AuthState {
 
 let refreshTimer: ReturnType<typeof setTimeout> | null = null
 
+/** 全局认证状态，统一管理登录生命周期、用户信息和动态菜单。 */
 export const useAuthStore = defineStore('auth', {
   state: (): AuthState => ({
     token: getToken() || '',

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// 故障类型统计面板：加载统计数据并以图表方式呈现故障分布。
 import { onMounted, ref } from 'vue'
 import { faultTypeStatsApi } from '@/api/maintenance'
 import type { FaultTypeStat } from '@/types/maintenance'

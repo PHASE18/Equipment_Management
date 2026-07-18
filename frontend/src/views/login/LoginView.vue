@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// 登录页：校验账号密码，调用认证状态并跳转到原目标页面。
 import { reactive, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { Lock, User } from '@element-plus/icons-vue'
@@ -13,12 +14,14 @@ const authStore = useAuthStore()
 const loginFormRef = ref<FormInstance>()
 const loading = ref(false)
 
+//普通对象转换成响应式变量
 const loginForm = reactive({
   username: '',
   password: ''
 })
 
-const loginRules: FormRules = {
+//用来做"用户名/密码不能为空"这类前端校验
+const loginRules: FormRules = { //Element Plus 提供的类型，约束这个变量必须符合"表单规则"的格式
   username: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
   password: [{ required: true, message: '请输入密码', trigger: 'blur' }]
 }
@@ -28,14 +31,14 @@ async function handleLogin() {
     return
   }
 
-  await loginFormRef.value.validate()
+  await loginFormRef.value.validate() //调用 Element Plus 表单实例的 validate() 方法，触发之前定义的 loginRules 规则做整体校验
   loading.value = true
   try {
-    await authStore.login(loginForm)
+    await authStore.login(loginForm) //把 loginForm（包含 username、password）发送给后端登录接口
     ElMessage.success('登录成功')
-    const redirect = typeof route.query.redirect === 'string' ? route.query.redirect : '/dashboard'
-    router.replace(redirect)
-  } catch {
+    const redirect = typeof route.query.redirect === 'string' ? route.query.redirect : '/dashboard' // 跳回用户想访问的页面或默认跳转到 '/dashboard'（首页）
+    router.replace(redirect) //跳转到目标地址
+  } catch { 
     // 错误提示由 http 拦截器统一处理
   } finally {
     loading.value = false

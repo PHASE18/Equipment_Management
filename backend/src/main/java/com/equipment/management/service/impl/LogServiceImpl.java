@@ -18,6 +18,7 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
+/** 日志查询服务实现。 */
 public class LogServiceImpl implements LogService {
 
     private final SysLoginLogService sysLoginLogService;

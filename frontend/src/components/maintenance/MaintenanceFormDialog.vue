@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// 维修表单对话框：处理维修记录新增、编辑、设备选择和附件上传。
 import { computed, reactive, ref, watch } from 'vue'
 import type { FormInstance, FormRules } from 'element-plus'
 import { ElMessage } from 'element-plus'

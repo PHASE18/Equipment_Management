@@ -1,3 +1,4 @@
+// 路由入口：维护公开页面、布局入口以及登录态校验钩子。
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { getToken } from '@/utils/token'

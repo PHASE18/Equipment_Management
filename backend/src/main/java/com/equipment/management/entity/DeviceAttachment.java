@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @TableName("device_attachment")
+/** 设备关联附件元数据，文件实体本身存储在对象存储中。 */
 public class DeviceAttachment extends BaseEntity {
 
     private Long deviceId;

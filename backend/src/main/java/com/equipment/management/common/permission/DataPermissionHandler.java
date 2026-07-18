@@ -11,6 +11,7 @@ import java.lang.reflect.Method;
 import java.util.Map;
 
 @Component
+/** 将当前用户数据范围转换为 SQL 条件的 MyBatis-Plus 权限处理器。 */
 public class DataPermissionHandler implements MultiDataPermissionHandler {
 
     private static final Map<String, DataPermissionRule> TABLE_RULES = Map.ofEntries(

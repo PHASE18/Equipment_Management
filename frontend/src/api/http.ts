@@ -5,6 +5,7 @@ import type { ApiResult } from '@/types/api'
 import type { LoginResponse } from '@/types/auth'
 import { getToken, removeToken, setToken } from '@/utils/token'
 
+/** 统一请求客户端：注入令牌、解包响应并处理认证失效。 */
 const http = axios.create({
   baseURL: '/api',
   timeout: 15000

@@ -1,3 +1,4 @@
+/** 项目查询、维护和设备项目绑定接口封装。 */
 import http from '@/api/http'
 import type { PageQuery, PageResult } from '@/types/api'
 import type { Project } from '@/types/device'

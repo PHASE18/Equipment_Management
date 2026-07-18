@@ -17,6 +17,7 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
+/** 统计服务实现，组合筛选条件并调用统计查询。 */
 public class StatisticsServiceImpl implements StatisticsService {
 
     private final StatisticsMapper statisticsMapper;

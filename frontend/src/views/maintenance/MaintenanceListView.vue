@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// 维修列表页：维护维修记录查询、编辑、删除和故障统计展示。
 import { onMounted, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import AppPagination from '@/components/common/AppPagination.vue'

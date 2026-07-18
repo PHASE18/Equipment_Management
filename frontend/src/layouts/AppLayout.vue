@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// 主布局：组合侧边栏、顶部用户区和路由内容区域。
 import { useRoute, useRouter } from 'vue-router'
 import SidebarMenu from '@/components/common/SidebarMenu.vue'
 import { useAuthStore } from '@/stores/auth'

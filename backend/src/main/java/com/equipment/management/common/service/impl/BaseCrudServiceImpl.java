@@ -11,6 +11,7 @@ import com.equipment.management.common.service.BaseCrudService;
 import com.equipment.management.common.util.PageUtils;
 import com.equipment.management.entity.BaseEntity;
 
+/** 通用 CRUD 服务实现，承载实体保存、更新、删除和分页等基础逻辑。 */
 public abstract class BaseCrudServiceImpl<M extends BaseMapper<T>, T extends BaseEntity>
         extends ServiceImpl<M, T> implements BaseCrudService<T> {
 

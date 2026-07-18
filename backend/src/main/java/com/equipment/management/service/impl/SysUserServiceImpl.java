@@ -15,6 +15,7 @@ import org.springframework.util.StringUtils;
 
 @Service
 @RequiredArgsConstructor
+/** 系统用户服务实现，负责用户资料、角色和密码处理。 */
 public class SysUserServiceImpl extends BaseCrudServiceImpl<SysUserMapper, SysUser> implements SysUserService {
 
     private static final String DEFAULT_PASSWORD = "123456";

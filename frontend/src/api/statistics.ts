@@ -1,3 +1,4 @@
+/** 首页仪表盘及统计图表接口封装。 */
 import http from '@/api/http'
 import type { ChartItem, DashboardData, StatisticsQuery } from '@/types/statistics'
 

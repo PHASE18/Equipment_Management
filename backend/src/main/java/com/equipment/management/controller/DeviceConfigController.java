@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequireAuth
 @RequestMapping("/api/device-config")
+/** 设备扩展配置的查询与维护接口。 */
 public class DeviceConfigController extends BaseCrudController<DeviceConfigService, DeviceConfig> {
 
     public DeviceConfigController(DeviceConfigService deviceConfigService) {

@@ -1,3 +1,4 @@
+/** 文件上传、下载及设备附件管理接口封装。 */
 import http from '@/api/http'
 import axios from 'axios'
 import type { FileCategory, FileMeta } from '@/types/file'

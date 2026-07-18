@@ -6,6 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
+/** 文件对象存储和附件元数据领域服务。 */
 public interface FileService {
 
     FileUploadResponse upload(MultipartFile file, Long deviceId, String category, String fileTypeCode);

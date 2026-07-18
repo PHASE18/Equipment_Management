@@ -15,6 +15,10 @@ import java.util.Date;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * JWT 令牌工具，负责令牌签发、签名校验、有限时间内的过期令牌解析，
+ * 以及令牌声明与当前登录用户对象之间的转换。
+ */
 @Component
 public class JwtUtils {
 
@@ -27,6 +31,7 @@ public class JwtUtils {
     @Value("${jwt.refresh-grace-period:604800000}")
     private long refreshGracePeriod;
 
+    /** 根据登录用户信息创建带签名和过期时间的访问令牌。 */
     public String generateToken(UserContext.LoginUser user) {
         Date now = new Date();
         Date expiry = new Date(now.getTime() + expiration);
@@ -43,6 +48,7 @@ public class JwtUtils {
                 .compact();
     }
 
+    /** 校验令牌签名并解析未过期令牌的声明。 */
     public Claims parseToken(String token) {
         return Jwts.parser()
                 .verifyWith(getSignKey())
@@ -51,6 +57,7 @@ public class JwtUtils {
                 .getPayload();
     }
 
+    /** 在刷新宽限期内允许读取过期令牌，超出宽限期仍抛出异常。 */
     public Claims parseTokenAllowExpired(String token) {
         try {
             return parseToken(token);
@@ -63,6 +70,7 @@ public class JwtUtils {
         }
     }
 
+    /** 将 JWT 声明恢复为请求上下文使用的登录用户对象。 */
     public UserContext.LoginUser toLoginUser(Claims claims) {
         UserContext.LoginUser user = new UserContext.LoginUser();
         user.setUserId(Long.parseLong(claims.getSubject()));
@@ -77,10 +85,12 @@ public class JwtUtils {
         return user;
     }
 
+    /** 判断令牌的过期时间是否早于当前时间。 */
     public boolean isTokenExpired(String token) {
         return parseToken(token).getExpiration().before(new Date());
     }
 
+    /** 将逗号分隔的角色编码清洗并转换为集合。 */
     private Set<String> parseRoleCodes(String roleCodes) {
         if (roleCodes == null || roleCodes.isBlank()) {
             return Set.of();
@@ -91,6 +101,7 @@ public class JwtUtils {
                 .collect(Collectors.toSet());
     }
 
+    /** 使用配置的密钥生成 HMAC 签名密钥。 */
     private SecretKey getSignKey() {
         return Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }

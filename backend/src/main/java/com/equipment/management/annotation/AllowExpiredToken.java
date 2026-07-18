@@ -12,5 +12,6 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
+/** 标记允许在刷新宽限期内读取过期令牌的接口。 */
 public @interface AllowExpiredToken {
 }

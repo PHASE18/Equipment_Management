@@ -8,6 +8,7 @@ import lombok.Data;
  * 统一分页查询参数
  */
 @Data
+/** 统一分页请求参数，负责页码、页大小和通用关键词承载。 */
 public class PageQuery {
 
     @Min(value = 1, message = "页码最小为1")

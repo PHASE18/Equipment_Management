@@ -10,6 +10,7 @@ import java.time.LocalDate;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @TableName("device_maintenance")
+/** 设备维修工单，记录故障、处理过程、费用和维修状态。 */
 public class DeviceMaintenance extends BaseEntity {
 
     private Long deviceId;

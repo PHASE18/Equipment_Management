@@ -13,6 +13,7 @@ import java.util.Set;
 
 @Component
 @RequiredArgsConstructor
+/** 执行接口权限编码匹配及管理员快速放行判断。 */
 public class PermissionChecker {
 
     private static final Set<String> SUPER_ROLES = Set.of(

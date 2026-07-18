@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 @Service
+/** 设备主数据服务实现。 */
 public class DeviceServiceImpl extends BaseCrudServiceImpl<DeviceMapper, Device> implements DeviceService {
 
     @Override

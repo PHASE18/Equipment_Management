@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 @Service
+/** 项目基础信息服务实现。 */
 public class ProjectServiceImpl extends BaseCrudServiceImpl<ProjectMapper, Project> implements ProjectService {
 
     @Override

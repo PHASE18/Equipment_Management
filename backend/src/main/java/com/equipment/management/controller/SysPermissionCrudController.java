@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequireAuth
 @RequestMapping("/api/permission/crud")
+/** 权限节点和菜单树管理接口。 */
 public class SysPermissionCrudController extends BaseCrudController<SysPermissionCrudService, SysPermission> {
 
     public SysPermissionCrudController(SysPermissionCrudService sysPermissionCrudService) {

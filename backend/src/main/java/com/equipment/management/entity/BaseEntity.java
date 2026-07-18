@@ -10,6 +10,7 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Data
+/** 所有持久化实体共享的主键、创建时间和更新时间字段。 */
 public abstract class BaseEntity {
 
     @TableId(type = IdType.AUTO)

@@ -5,6 +5,7 @@ import com.equipment.management.common.service.BaseCrudService;
 import com.equipment.management.dto.request.ProjectQuery;
 import com.equipment.management.entity.Project;
 
+/** 项目基础信息领域服务。 */
 public interface ProjectService extends BaseCrudService<Project> {
 
     PageResult<Project> page(ProjectQuery query);

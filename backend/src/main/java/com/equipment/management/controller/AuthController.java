@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequireAuth
 @RequiredArgsConstructor
+/** 登录、令牌刷新、当前用户和密码维护接口。 */
 public class AuthController {
 
     private final AuthService authService;

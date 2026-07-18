@@ -28,6 +28,7 @@ import java.util.List;
 @RequireAuth
 @CrudPermission(module = "maintenance")
 @RequestMapping("/api/maintenance")
+/** 设备维修工单及维修详情接口。 */
 public class DeviceMaintenanceController extends BaseCrudController<DeviceMaintenanceService, DeviceMaintenance> {
 
     public DeviceMaintenanceController(DeviceMaintenanceService deviceMaintenanceService) {

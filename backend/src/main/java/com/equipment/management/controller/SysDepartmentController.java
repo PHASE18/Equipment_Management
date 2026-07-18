@@ -19,6 +19,7 @@ import java.util.List;
 @RequireAuth
 @CrudPermission(module = "system:dept")
 @RequestMapping("/api/department")
+/** 组织部门树管理接口。 */
 public class SysDepartmentController extends BaseCrudController<SysDepartmentService, SysDepartment> {
 
     public SysDepartmentController(SysDepartmentService sysDepartmentService) {

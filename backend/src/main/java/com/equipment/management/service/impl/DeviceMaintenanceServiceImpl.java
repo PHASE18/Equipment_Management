@@ -37,6 +37,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+/** 维修工单服务实现，负责工单校验、状态和附件关联。 */
 public class DeviceMaintenanceServiceImpl extends BaseCrudServiceImpl<DeviceMaintenanceMapper, DeviceMaintenance>
         implements DeviceMaintenanceService {
 

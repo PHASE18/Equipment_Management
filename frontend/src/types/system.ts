@@ -1,3 +1,4 @@
+/** 系统管理实体共享的主键和审计字段。 */
 export interface BaseEntity {
   id?: number
   createTime?: string

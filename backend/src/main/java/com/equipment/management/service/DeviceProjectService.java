@@ -9,6 +9,7 @@ import com.equipment.management.entity.DeviceProject;
 
 import java.util.List;
 
+/** 设备与项目关联关系领域服务。 */
 public interface DeviceProjectService extends IService<DeviceProject> {
 
     PageResult<DeviceProject> pageQuery(PageQuery query, Long deviceId, Long projectId);

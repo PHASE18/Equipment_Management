@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// 仪表盘图表卡片：统一承载标题、加载态和 ECharts 实例容器。
 import { computed } from 'vue'
 import type { EChartsOption } from 'echarts'
 import { useChart } from '@/composables/useChart'

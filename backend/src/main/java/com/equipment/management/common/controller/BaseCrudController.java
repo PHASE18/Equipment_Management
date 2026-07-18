@@ -17,8 +17,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 /**
  * 通用 CRUD Controller 基类
  */
+/** 通用 CRUD 控制器基类，统一提供分页、详情、新增、更新和删除入口。 */
 public abstract class BaseCrudController<S extends BaseCrudService<T>, T extends BaseEntity> {
 
+    /** 由子类控制器注入的业务服务。 */
     protected final S baseService;
 
     protected BaseCrudController(S baseService) {

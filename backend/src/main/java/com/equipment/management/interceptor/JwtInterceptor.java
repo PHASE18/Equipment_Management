@@ -25,6 +25,7 @@ import java.util.Set;
  */
 @Component
 @RequiredArgsConstructor
+/** 从请求头解析 JWT 并将登录用户写入请求上下文的拦截器。 */
 public class JwtInterceptor implements HandlerInterceptor {
 
     private static final String AUTH_HEADER = "Authorization";

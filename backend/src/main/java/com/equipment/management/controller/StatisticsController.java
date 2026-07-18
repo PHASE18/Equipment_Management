@@ -19,6 +19,7 @@ import java.util.Map;
 @RequirePermission(any = {"statistics:view", "dashboard:view"})
 @RequestMapping("/api/statistics")
 @RequiredArgsConstructor
+/** 首页汇总指标、趋势图和分类统计接口。 */
 public class StatisticsController {
 
     private final StatisticsService statisticsService;

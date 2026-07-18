@@ -25,6 +25,7 @@ import java.util.List;
 @RequireAuth
 @RequestMapping("/api/device/status")
 @RequiredArgsConstructor
+/** 设备生命周期状态迁移接口。 */
 public class DeviceStatusController {
 
     private final DeviceStatusService deviceStatusService;

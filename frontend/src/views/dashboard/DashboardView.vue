@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// 仪表盘：加载汇总指标和图表数据，响应筛选条件并刷新可视化内容。
 import { computed, onMounted, reactive, ref } from 'vue'
 import DashboardChartCard from '@/components/dashboard/DashboardChartCard.vue'
 import { getDashboardApi } from '@/api/statistics'
@@ -32,6 +33,7 @@ const query = reactive<StatisticsQuery>({
   endDate: ''
 })
 
+// 计算属性 departmentOptions，自动把原始部门列表 departments 转换成下拉 / 树形选择器可用的选项数组
 const departmentOptions = computed(() => buildDepartmentTreeOptions(departments.value))
 
 const summaryCards = computed(() => {

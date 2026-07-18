@@ -9,6 +9,7 @@ import java.time.LocalDate;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @TableName("device")
+/** 设备主数据，保存设备标识、分类、负责人和当前生命周期状态。 */
 public class Device extends BaseEntity {
 
     private String deviceNo;

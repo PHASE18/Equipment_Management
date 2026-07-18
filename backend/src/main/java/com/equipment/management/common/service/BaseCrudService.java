@@ -6,6 +6,7 @@ import com.equipment.management.common.query.PageQuery;
 import com.equipment.management.common.result.PageResult;
 import com.equipment.management.entity.BaseEntity;
 
+/** 领域 CRUD 服务基接口，约束实体服务统一继承 MyBatis-Plus 能力。 */
 public interface BaseCrudService<T extends BaseEntity> extends IService<T> {
 
     PageResult<T> pageQuery(PageQuery query, Wrapper<T> wrapper);

@@ -20,18 +20,22 @@ import org.springframework.web.bind.annotation.RestController;
 @RequireAuth
 @CrudPermission(module = "device")
 @RequestMapping("/api/device")
+/** 设备基础信息控制器，复用通用 CRUD 流程并提供设备关键词查询。 */
 public class DeviceController extends BaseCrudController<DeviceService, Device> {
 
+    /** 注入设备业务服务并交给基础控制器保存。 */
     public DeviceController(DeviceService deviceService) {
         super(deviceService);
     }
 
     @GetMapping("/list")
+    /** 按查询条件返回设备分页结果。 */
     public Result<PageResult<Device>> list(@Valid DeviceQuery query) {
         return Result.success(baseService.page(query));
     }
 
     @Override
+    /** 构造设备列表的关键词过滤和创建时间倒序规则。 */
     protected QueryWrapper<Device> buildQueryWrapper(PageQuery query) {
         QueryWrapper<Device> wrapper = new QueryWrapper<>();
         if (StringUtils.hasText(query.getKeyword())) {

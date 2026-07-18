@@ -1,12 +1,27 @@
 <!doctype html>
+<!-- 根元素，lang="zh-CN" 告诉浏览器/搜索引擎/屏幕阅读器该页面使用简体中文-->
 <html lang="zh-CN">
   <head>
+    <!-- 指定文档字符编码为 UTF-8，支持中文等多语言字符正常显示，必须放在 head 的最前面几行，避免乱码 -->
     <meta charset="UTF-8" />
+    <!-- 视口设置：
+         width=device-width  让页面宽度等于设备屏幕宽度
+         initial-scale=1.0   初始缩放比例为1（不缩放）
+         这是响应式布局的基础配置，保证移动端显示正常 -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>设备管理系统</title>
   </head>
   <body>
     <div id="app"></div>
+    <!-- 单页应用（SPA）的挂载点。
+         前端框架（如 Vue/React）会通过 JS 找到这个 id="app" 的容器，
+         把整个应用渲染/挂载到这里。此时它是空的，内容由 JS 动态生成 -->
     <script type="module" src="/src/main.ts"></script>
+    <!-- 引入项目入口脚本：
+         type="module"  表示使用 ES Module 标准，支持 import/export 语法，
+                        由浏览器原生支持模块化加载（开发环境）
+         src="/src/main.ts"  指向 TypeScript 入口文件，
+                        由 Vite 在开发时实时编译、在打包时处理依赖关系。
+         该脚本通常会创建应用实例并挂载到上面的 #app 元素上 -->
   </body>
 </html>

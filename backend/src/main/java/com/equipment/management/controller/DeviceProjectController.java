@@ -25,6 +25,7 @@ import java.util.List;
 @RequireAuth
 @RequestMapping("/api/device-project")
 @RequiredArgsConstructor
+/** 设备与项目关联关系接口。 */
 public class DeviceProjectController {
 
     private final DeviceProjectService deviceProjectService;

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// 附件列表页：按设备查询附件并提供上传、下载和删除操作。
 import { onMounted, reactive, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import AppPagination from '@/components/common/AppPagination.vue'

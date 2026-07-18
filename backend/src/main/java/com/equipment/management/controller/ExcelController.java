@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RequireAuth
 @RequestMapping("/api/excel")
 @RequiredArgsConstructor
+/** 设备 Excel 导入导出接口。 */
 public class ExcelController {
 
     private final ExcelService excelService;

@@ -4,6 +4,7 @@ import com.equipment.management.common.constant.ErrorCode;
 import lombok.Data;
 
 @Data
+/** 后端统一响应包装，使用 code、message 和 data 表达处理结果。 */
 public class Result<T> {
     private Boolean success;
     private Integer code;

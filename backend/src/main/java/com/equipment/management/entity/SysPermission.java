@@ -10,6 +10,7 @@ import java.util.List;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @TableName("sys_permission")
+/** 菜单或操作权限节点，支持树形菜单和权限编码。 */
 public class SysPermission extends BaseEntity {
 
     private Long parentId;

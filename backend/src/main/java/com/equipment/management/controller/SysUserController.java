@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequireAuth
 @CrudPermission(module = "system:user")
 @RequestMapping("/api/user")
+/** 系统用户管理接口。 */
 public class SysUserController extends BaseCrudController<SysUserService, SysUser> {
 
     public SysUserController(SysUserService sysUserService) {

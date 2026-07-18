@@ -1,3 +1,4 @@
+/** 文件业务分类，用于选择上传校验规则和展示方式。 */
 export type FileCategory = 'image' | 'document' | 'excel' | 'contract'
 
 export interface FileMeta {

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// 部门管理页：维护组织树节点及其上下级关系。
 import { computed, onMounted, ref } from 'vue'
 import type { FormInstance, FormRules } from 'element-plus'
 import AppPagination from '@/components/common/AppPagination.vue'

@@ -14,5 +14,6 @@ import java.lang.annotation.Target;
 @Documented
 public @interface CrudPermission {
 
+    /** 返回权限编码使用的业务模块名。 */
     String module();
 }

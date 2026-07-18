@@ -1,3 +1,4 @@
+/** 判断权限集合是否包含指定权限；空权限编码表示无需校验。 */
 export function hasPermission(permissions: string[] | undefined, code: string) {
   if (!code) {
     return true
@@ -11,10 +12,12 @@ export function hasPermission(permissions: string[] | undefined, code: string) {
   return permissions.includes(code)
 }
 
+/** 判断权限集合是否至少包含一个目标权限。 */
 export function hasAnyPermission(permissions: string[] | undefined, ...codes: string[]) {
   return codes.some(code => hasPermission(permissions, code))
 }
 
+/** 判断权限集合是否同时包含所有目标权限。 */
 export function hasAllPermissions(permissions: string[] | undefined, ...codes: string[]) {
   return codes.every(code => hasPermission(permissions, code))
 }

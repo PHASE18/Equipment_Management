@@ -6,6 +6,7 @@ import com.equipment.management.dto.response.DashboardResponse;
 import java.util.List;
 import java.util.Map;
 
+/** 仪表盘汇总和统计分析领域服务。 */
 public interface StatisticsService {
 
     DashboardResponse dashboard(StatisticsQuery query);

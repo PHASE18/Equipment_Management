@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// 状态下拉框：将后端状态编码转换为统一的可选项展示。
 import { computed } from 'vue'
 import { DEVICE_STATUS_OPTIONS } from '@/types/device'
 

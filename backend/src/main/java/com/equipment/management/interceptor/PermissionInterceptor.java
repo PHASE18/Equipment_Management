@@ -14,6 +14,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 
 @Component
 @RequiredArgsConstructor
+/** 根据控制器权限注解和当前用户权限判断接口是否允许执行。 */
 public class PermissionInterceptor implements HandlerInterceptor {
 
     private final PermissionChecker permissionChecker;

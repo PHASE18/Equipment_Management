@@ -20,6 +20,7 @@ import java.util.List;
 @RestController
 @RequireAuth
 @RequestMapping("/api/config")
+/** 系统配置项管理接口。 */
 public class SysConfigController extends BaseCrudController<SysConfigService, SysConfig> {
 
     public SysConfigController(SysConfigService sysConfigService) {

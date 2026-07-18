@@ -10,6 +10,7 @@
 </template>
 
 <script setup lang="ts">
+// 无权限页面：向用户说明当前路由不可访问并提供返回入口。
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 

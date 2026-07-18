@@ -13,6 +13,7 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 @Slf4j
 @RestControllerAdvice
+/** 将校验、业务和系统异常转换为统一 Result 响应。 */
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(BusinessException.class)

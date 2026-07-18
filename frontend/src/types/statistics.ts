@@ -1,3 +1,4 @@
+/** 仪表盘统计接口的筛选条件。 */
 export interface StatisticsQuery {
   departmentId?: number
   projectId?: number

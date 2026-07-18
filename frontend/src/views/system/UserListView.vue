@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// 用户管理页：完成用户分页、角色分配、启停用和密码维护。
 import { computed, onMounted, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import type { FormInstance, FormRules } from 'element-plus'

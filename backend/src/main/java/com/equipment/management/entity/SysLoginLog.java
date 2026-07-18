@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 
 @Data
 @TableName("sys_login_log")
+/** 登录审计记录，保存账号、IP、结果和失败原因。 */
 public class SysLoginLog {
 
     @TableId(type = IdType.AUTO)

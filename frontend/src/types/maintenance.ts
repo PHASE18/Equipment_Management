@@ -1,5 +1,6 @@
 import type { FileMeta } from '@/types/file'
 
+/** 维修记录及其关联设备信息。 */
 export interface MaintenanceRecord {
   id?: number
   deviceId?: number

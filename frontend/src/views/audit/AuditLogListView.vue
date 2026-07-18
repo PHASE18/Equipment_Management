@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// 审计日志页：分页展示登录与业务操作日志，并提供筛选条件。
 import { onMounted, reactive, ref, watch } from 'vue'
 import AppPagination from '@/components/common/AppPagination.vue'
 import { logApi, type LogQuery } from '@/api/log'

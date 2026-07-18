@@ -22,6 +22,7 @@ import java.util.List;
 @RequireAuth
 @RequestMapping("/api/file")
 @RequiredArgsConstructor
+/** 文件上传、下载和删除接口。 */
 public class FileController {
 
     private final FileService fileService;

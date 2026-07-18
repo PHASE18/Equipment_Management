@@ -2,6 +2,7 @@ import { onBeforeUnmount, onMounted, shallowRef, watch, type Ref } from 'vue'
 import * as echarts from 'echarts'
 import type { EChartsOption } from 'echarts'
 
+/** 管理 ECharts 实例的创建、响应式更新、尺寸调整和销毁。 */
 export function useChart(option: Ref<EChartsOption | null>) {
   const chartRef = shallowRef<HTMLElement>()
   let chart: echarts.ECharts | null = null
@@ -36,6 +37,7 @@ export function useChart(option: Ref<EChartsOption | null>) {
   return { chartRef, render, resize }
 }
 
+/** 创建无数据时使用的空图表配置。 */
 export function emptyChartOption(title: string): EChartsOption {
   return {
     title: {
@@ -47,6 +49,7 @@ export function emptyChartOption(title: string): EChartsOption {
   }
 }
 
+/** 创建环形/饼图配置。 */
 export function pieOption(title: string, data: Array<{ name: string; value: number }>): EChartsOption {
   if (!data.length) {
     return emptyChartOption('暂无数据')

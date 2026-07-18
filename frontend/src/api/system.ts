@@ -1,3 +1,4 @@
+/** 用户、角色、部门、字典和设备基础字典接口封装。 */
 import http from '@/api/http'
 import type { PageQuery, PageResult } from '@/types/api'
 import type { SysDepartment, SysDict, SysRole, SysUser, UserQuery } from '@/types/system'

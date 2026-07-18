@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// 项目列表页：提供项目基础信息维护及设备项目关联操作。
 import { onMounted, ref } from 'vue'
 import type { FormInstance, FormRules } from 'element-plus'
 import AppPagination from '@/components/common/AppPagination.vue'

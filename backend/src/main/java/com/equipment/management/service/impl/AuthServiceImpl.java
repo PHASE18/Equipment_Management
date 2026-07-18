@@ -37,6 +37,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+/** 认证服务实现，协调用户校验、令牌签发、刷新和登录审计。 */
 public class AuthServiceImpl implements AuthService {
 
     private final JwtUtils jwtUtils;

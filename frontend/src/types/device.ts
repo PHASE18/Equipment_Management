@@ -1,3 +1,4 @@
+/** 与后端基础实体对应的公共审计字段。 */
 export interface BaseEntity {
   id?: number
   createTime?: string

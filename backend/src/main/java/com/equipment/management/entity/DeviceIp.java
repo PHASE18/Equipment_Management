@@ -7,6 +7,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @TableName("device_ip")
+/** 设备网络地址记录，支持一台设备关联多个 IP。 */
 public class DeviceIp extends BaseEntity {
 
     private Long deviceId;

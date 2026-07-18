@@ -7,6 +7,7 @@ import com.equipment.management.service.DeviceAttachmentService;
 import org.springframework.stereotype.Service;
 
 @Service
+/** 设备附件元数据服务实现。 */
 public class DeviceAttachmentServiceImpl extends BaseCrudServiceImpl<DeviceAttachmentMapper, DeviceAttachment>
         implements DeviceAttachmentService {
 }

@@ -24,6 +24,7 @@ import java.lang.reflect.Method;
 @Component
 @Order(100)
 @RequiredArgsConstructor
+/** 通过切面采集标注接口的请求信息并写入操作审计日志。 */
 public class OperationLogAspect {
 
     private final AuditMetadataResolver auditMetadataResolver;

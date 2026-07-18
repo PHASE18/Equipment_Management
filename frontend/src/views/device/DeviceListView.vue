@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// 设备列表页：组合分页查询、设备表单、附件入口和生命周期操作。
 import { computed, onMounted, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import AppPagination from '@/components/common/AppPagination.vue'

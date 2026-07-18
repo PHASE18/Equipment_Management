@@ -1,3 +1,4 @@
+/** 设备、设备 IP、状态和生命周期相关的后端接口封装。 */
 import axios from 'axios'
 import http from '@/api/http'
 import type { PageQuery, PageResult } from '@/types/api'

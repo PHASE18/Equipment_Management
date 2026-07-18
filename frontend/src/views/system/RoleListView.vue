@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// 角色管理页：维护角色基础信息并配置角色权限集合。
 import { onMounted, ref } from 'vue'
 import type { FormInstance, FormRules } from 'element-plus'
 import AppPagination from '@/components/common/AppPagination.vue'

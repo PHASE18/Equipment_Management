@@ -14,6 +14,7 @@ import java.util.Locale;
 
 @Component
 @RequiredArgsConstructor
+/** 根据文件类别、扩展名和大小限制校验上传文件。 */
 public class FileUploadValidator {
 
     private final FileUploadProperties fileUploadProperties;

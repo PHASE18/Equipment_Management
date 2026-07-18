@@ -9,6 +9,7 @@ import com.equipment.management.entity.DeviceMaintenance;
 
 import java.util.List;
 
+/** 设备维修工单领域服务。 */
 public interface DeviceMaintenanceService extends BaseCrudService<DeviceMaintenance> {
 
     PageResult<MaintenanceDetailResponse> page(MaintenanceQuery query);

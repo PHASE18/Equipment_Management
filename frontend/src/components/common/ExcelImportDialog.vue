@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// Excel 导入对话框：负责选择文件、提交导入并展示后端校验结果。
 import { ref } from 'vue'
 import { ElMessage, type UploadFile } from 'element-plus'
 import * as XLSX from 'xlsx'

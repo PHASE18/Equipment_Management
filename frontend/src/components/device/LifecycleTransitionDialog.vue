@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// 生命周期变更对话框：校验目标状态并提交设备状态迁移请求。
 import { reactive, ref, watch } from 'vue'
 import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
 import StatusSelect from '@/components/common/StatusSelect.vue'

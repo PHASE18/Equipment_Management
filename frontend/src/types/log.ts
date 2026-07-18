@@ -1,3 +1,4 @@
+/** 登录日志记录。 */
 export interface LoginLog {
   id?: number
   username?: string

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// 设备表单对话框：复用于设备新增和编辑，负责表单校验及关联数据选择。
 import { computed, reactive, ref, watch } from 'vue'
 import type { FormInstance, FormRules } from 'element-plus'
 import { ElMessage } from 'element-plus'

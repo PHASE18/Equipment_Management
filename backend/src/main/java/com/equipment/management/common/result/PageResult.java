@@ -18,6 +18,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+/** 统一分页响应，包含当前页记录、总数和分页元数据。 */
 public class PageResult<T> implements Serializable {
 
     @Serial

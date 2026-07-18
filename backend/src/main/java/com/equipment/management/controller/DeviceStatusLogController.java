@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequirePermission(any = {"log:view", "log:list"})
 @RequestMapping("/api/device-status-log")
 @RequiredArgsConstructor
+/** 设备生命周期状态历史查询接口。 */
 public class DeviceStatusLogController {
 
     private final DeviceStatusLogService deviceStatusLogService;
