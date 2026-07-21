@@ -128,7 +128,9 @@ public class ExcelServiceImpl implements ExcelService {
         row.setStatusName(DeviceLifecycleStatus.labelOf(device.getStatusCode()));
         row.setDepartmentName(deptNames.getOrDefault(device.getDepartmentId(), ""));
         row.setUseDepartmentName(deptNames.getOrDefault(device.getUseDepartmentId(), ""));
-        row.setManagerName(userNames.getOrDefault(device.getManagerUserId(), ""));
+        row.setManagerName(StringUtils.hasText(device.getManagerName())
+                ? device.getManagerName()
+                : userNames.getOrDefault(device.getManagerUserId(), ""));
         row.setUseUserName(device.getUseUserName());
         row.setOriginalValue(formatDecimal(device.getOriginalValue()));
         row.setApprovalNo(device.getApprovalNo());

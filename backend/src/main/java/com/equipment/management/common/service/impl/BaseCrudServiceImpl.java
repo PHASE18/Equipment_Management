@@ -31,6 +31,8 @@ public abstract class BaseCrudServiceImpl<M extends BaseMapper<T>, T extends Bas
 
     @Override
     public void createEntity(T entity) {
+        // 忽略前端残留的主键，始终由数据库自增生成，避免 Duplicate entry
+        entity.setId(null);
         save(entity);
     }
 

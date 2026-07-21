@@ -74,14 +74,15 @@ function openEdit(row: MaintenanceRecord) {
 }
 
 async function handleDelete(row: MaintenanceRecord) {
-  await ElMessageBox.confirm(`确定删除该维修记录吗？`, '提示', { type: 'warning' })
+  await ElMessageBox.confirm(`确定删除该维修记录吗？`, '提示', { type: 'warning', confirmButtonText: '确定', cancelButtonText: '取消' })
   await deleteMaintenanceApi(row.id!)
   ElMessage.success('删除成功')
   await refreshAll()
 }
 
 async function handleComplete(row: MaintenanceRecord) {
-  await ElMessageBox.confirm('确认维修完成？设备将自动恢复为「在用」状态。', '完成维修', { type: 'info' })
+  await ElMessageBox.confirm('确认维修完成？设备将自动恢复为「在用」状态。', '完成维修', { type: 'info',    confirmButtonText: '确定',
+  cancelButtonText: '取消'})
   await completeMaintenanceApi(row.id!)
   ElMessage.success('维修已完成')
   await refreshAll()

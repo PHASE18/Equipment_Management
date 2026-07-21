@@ -32,12 +32,6 @@ export const FILE_CATEGORY_OPTIONS: Array<{ label: string; value: FileCategory; 
     value: 'excel',
     accept: '.xls,.xlsx',
     tip: '支持 XLS、XLSX，最大 50MB'
-  },
-  {
-    label: '合同',
-    value: 'contract',
-    accept: '.pdf,.doc,.docx',
-    tip: '支持 PDF、Word 合同文件，最大 50MB'
   }
 ]
 

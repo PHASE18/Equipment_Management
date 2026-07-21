@@ -4,7 +4,7 @@ import { computed, ref, watch } from 'vue'
 import { Plus } from '@element-plus/icons-vue'
 import type { UploadFile, UploadProps, UploadRequestOptions, UploadUserFile } from 'element-plus'
 import { ElMessage } from 'element-plus'
-import { deleteFileApi, previewFileApi, uploadFileApi } from '@/api/file'
+import { deleteFileApi, downloadFileApi, uploadFileApi } from '@/api/file'
 import type { FileCategory, FileMeta } from '@/types/file'
 import { getCategoryConfig } from '@/types/file'
 
@@ -109,16 +109,15 @@ async function handleRemove(uploadFile: UploadFile) {
   }
 }
 
-async function handlePreview(uploadFile: UploadFile) {
+async function handleDownload(uploadFile: UploadFile) {
   const target = files.value.find(item => item.fileId === uploadFile.uid || item.url === uploadFile.url)
   if (!target) {
     return
   }
   try {
-    const blobUrl = await previewFileApi(target.fileId)
-    window.open(blobUrl, '_blank')
+    await downloadFileApi(target.fileId, target.fileName)
   } catch {
-    ElMessage.error('文件预览失败')
+    ElMessage.error('文件下载失败')
   }
 }
 </script>
@@ -134,7 +133,7 @@ async function handlePreview(uploadFile: UploadFile) {
     :list-type="listType"
     :before-upload="beforeUpload"
     :http-request="customUpload"
-    :on-preview="handlePreview"
+    :on-preview="handleDownload"
     :on-remove="handleRemove"
     multiple
   >

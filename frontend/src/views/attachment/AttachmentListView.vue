@@ -5,7 +5,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import AppPagination from '@/components/common/AppPagination.vue'
 import UploadPanel from '@/components/common/UploadPanel.vue'
 import { pageDevicesApi } from '@/api/device'
-import { deleteFileApi, getFileDownloadUrl, listDeviceFilesApi, previewFileApi } from '@/api/file'
+import { deleteFileApi, downloadFileApi, listDeviceFilesApi } from '@/api/file'
 import type { Device } from '@/types/device'
 import type { FileMeta } from '@/types/file'
 import { FILE_CATEGORY_OPTIONS, type FileCategory } from '@/types/file'
@@ -60,23 +60,21 @@ async function handleSelectDevice(deviceId: number) {
   await loadFiles()
 }
 
-async function handlePreview(row: FileMeta) {
+async function handleDownload(row: FileMeta) {
   try {
-    const url = await previewFileApi(row.fileId)
-    window.open(url, '_blank')
-  } catch {
-    ElMessage.error('预览失败')
+    await downloadFileApi(row.fileId, row.fileName)
+    ElMessage.success('开始下载')
+  } catch (error) {
+    const message = error instanceof Error ? error.message : '下载失败'
+    ElMessage.error(message)
   }
-}
-
-function handleDownload(row: FileMeta) {
-  window.open(getFileDownloadUrl(row.fileId), '_blank')
 }
 
 async function handleDelete(row: FileMeta) {
   await ElMessageBox.confirm(`确定删除附件「${row.fileName}」吗？`, '提示', {
     type: 'warning',
-    confirmButtonText: '确定'
+    confirmButtonText: '确定',
+    cancelButtonText: '取消'
   })
   await deleteFileApi(row.fileId)
   ElMessage.success('删除成功')
@@ -191,16 +189,8 @@ onMounted(loadDevices)
             <el-table-column prop="fileTypeCode" label="类型编码" width="140" />
             <el-table-column prop="fileSize" label="大小(字节)" width="120" />
             <el-table-column prop="uploadTime" label="上传时间" min-width="170" />
-            <el-table-column label="操作" width="200" fixed="right">
+            <el-table-column label="操作" width="160" fixed="right">
               <template #default="{ row }">
-                <el-button
-                  :data-testid="`attachment-preview-${row.fileId}`"
-                  link
-                  type="primary"
-                  @click="handlePreview(row)"
-                >
-                  预览
-                </el-button>
                 <el-button
                   :data-testid="`attachment-download-${row.fileId}`"
                   link

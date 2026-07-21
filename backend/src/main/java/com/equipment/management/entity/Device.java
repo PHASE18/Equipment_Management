@@ -26,8 +26,10 @@ public class Device extends BaseEntity {
     private Long departmentId;
     /** 使用部门 */
     private Long useDepartmentId;
-    /** 责任人 */
+    /** 责任人用户ID（数据权限 SELF 仍可用，表单不再编辑） */
     private Long managerUserId;
+    /** 责任人（自由文本） */
+    private String managerName;
     /** 使用人 */
     private String useUserName;
     private BigDecimal originalValue;

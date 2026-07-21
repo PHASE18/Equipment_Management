@@ -18,7 +18,7 @@ import {
 } from '@/api/device'
 import { listDeviceFilesApi } from '@/api/file'
 import { pageProjectsApi } from '@/api/project'
-import { optionsApi, type UserOption } from '@/api/options'
+import { optionsApi } from '@/api/options'
 import { buildDepartmentTreeOptions } from '@/api/system'
 import type { SysDepartment, SysDict } from '@/types/system'
 import type { Device, DeviceConfig, DeviceIp, Project } from '@/types/device'
@@ -44,7 +44,6 @@ const departments = ref<SysDepartment[]>([])
 const brands = ref<SysDict[]>([])
 const deviceTypes = ref<SysDict[]>([])
 const projects = ref<Project[]>([])
-const users = ref<UserOption[]>([])
 const projectIds = ref<number[]>([])
 const contractFiles = ref<FileMeta[]>([])
 const photoFiles = ref<FileMeta[]>([])
@@ -64,7 +63,7 @@ const emptyDevice = (): Device => ({
   deviceTypeCode: '',
   departmentId: undefined,
   useDepartmentId: undefined,
-  managerUserId: undefined,
+  managerName: '',
   useUserName: '',
   originalValue: undefined,
   approvalNo: '',
@@ -161,18 +160,16 @@ function resetForm() {
 }
 
 async function loadOptions() {
-  const [deptList, brandList, typeList, projectPage, userList] = await Promise.all([
+  const [deptList, brandList, typeList, projectPage] = await Promise.all([
     optionsApi.departments(),
     optionsApi.brands(),
     optionsApi.deviceTypes(),
-    pageProjectsApi({ pageNum: 1, pageSize: 200 }),
-    optionsApi.users()
+    pageProjectsApi({ pageNum: 1, pageSize: 200 })
   ])
   departments.value = deptList
   brands.value = brandList
   deviceTypes.value = typeList
   projects.value = projectPage.records
-  users.value = userList
 }
 
 async function loadRelatedData(deviceId: number) {
@@ -454,20 +451,7 @@ function handleFinish() {
             </el-col>
             <el-col :span="12">
               <el-form-item label="责任人">
-                <el-select
-                  v-model="form.managerUserId"
-                  clearable
-                  filterable
-                  placeholder="选择责任人"
-                  style="width: 100%"
-                >
-                  <el-option
-                    v-for="item in users"
-                    :key="item.id"
-                    :label="item.realName ? `${item.realName}（${item.username}）` : item.username"
-                    :value="item.id!"
-                  />
-                </el-select>
+                <el-input v-model="form.managerName" placeholder="责任人姓名" />
               </el-form-item>
             </el-col>
             <el-col :span="12">

@@ -19,8 +19,8 @@ export interface Device extends BaseEntity {
   departmentId?: number
   /** 使用部门 */
   useDepartmentId?: number
-  /** 责任人 */
-  managerUserId?: number
+  /** 责任人（自由文本） */
+  managerName?: string
   /** 使用人 */
   useUserName?: string
   originalValue?: number

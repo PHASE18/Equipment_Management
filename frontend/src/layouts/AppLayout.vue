@@ -21,7 +21,7 @@ async function handleLogout() {
         <div class="brand-mark">EM</div>
         <div>
           <strong>设备管理系统</strong>
-          <span>Equipment</span>
+<!--          <span>Equipment</span>-->
         </div>
       </div>
 
@@ -56,56 +56,56 @@ async function handleLogout() {
 .app-shell {
   height: 100%;
 }
-
+/* 侧边栏主背景 */
 .app-aside {
   display: flex;
   flex-direction: column;
-  background: #101827;
-  color: #fff;
+  background: #E6F2DD;
+  color: #495057;
 }
-
+/* 侧边栏品牌 */
 .brand {
   display: flex;
   align-items: center;
   gap: 12px;
   height: 64px;
   padding: 0 18px;
-  border-bottom: 1px solid rgb(255 255 255 / 10%);
+  border-bottom: 1px solid rgba(91, 89, 89, 0.1);
 }
-
+/* 侧边栏品牌图标 */
 .brand-mark {
   display: grid;
-  width: 36px;
-  height: 36px;
+  width: 34px;
+  height: 34px;
   place-items: center;
-  border-radius: 8px;
-  background: #2f7cf6;
+  border-radius: 12px;
+  background: #6a737b;
   font-weight: 700;
 }
-
+/* 侧边栏品牌文字 */
 .brand span {
   display: block;
   margin-top: 2px;
-  color: #9ca3af;
+  color: #4c4e50;
   font-size: 12px;
 }
-
+/* 侧边栏菜单 */
 .side-menu {
   flex: 1;
   border-right: 0;
   background: transparent;
 }
-
+/* 侧边栏菜单项 */  
 .side-menu :deep(.el-menu-item),
 .side-menu :deep(.el-sub-menu__title) {
-  color: #cbd5e1;
+  color: #659287;
 }
-
+/* 侧边栏菜单项激活 */
 .side-menu :deep(.el-menu-item.is-active) {
   color: #fff;
-  background: #1d4ed8;
+  background: #9aa1a8; 
 }
-
+/* 顶部用户区 */
 .app-header {
   display: flex;
   align-items: center;
@@ -115,37 +115,37 @@ async function handleLogout() {
   background: #fff;
   border-bottom: 1px solid #e5e7eb;
 }
-
+/* 顶部用户区标题 */
 .header-title {
   font-size: 18px;
   font-weight: 650;
 }
-
+/* 顶部用户区副标题 */
 .header-subtitle {
   margin-top: 3px;
   color: #6b7280;
   font-size: 12px;
 }
-
+/* 顶部用户区数据范围标签 */
 .scope-tag {
   margin-left: 8px;
   padding: 2px 8px;
   border-radius: 999px;
   background: #eff6ff;
-  color: #2563eb;
+  color: #3d6437;
 }
-
+/* 顶部用户区操作按钮 */
 .header-actions {
   display: flex;
   align-items: center;
   gap: 12px;
 }
-
+/* 顶部用户区用户名 */
 .user-name {
   color: #374151;
   font-size: 14px;
 }
-
+/* 内容区 */
 .app-main {
   overflow: auto;
   padding: 20px 24px;

@@ -106,7 +106,11 @@ async function submitForm() {
       }
       ElMessage.success('更新成功')
     } else {
-      await userApi.create(form)
+      const payload = { ...form }
+      delete payload.id
+      delete payload.createTime
+      delete payload.updateTime
+      await userApi.create(payload)
       const result = await userApi.list({ pageNum: 1, pageSize: 1, keyword: form.username })
       const userId = result.records[0]?.id
       if (userId && roleIds.value.length) {
@@ -126,7 +130,9 @@ async function handleResetPassword(row: SysUser) {
     return
   }
   await ElMessageBox.confirm(`确定将用户「${row.username}」密码重置为 123456 吗？`, '重置密码', {
-    type: 'warning'
+    type: 'warning',
+    confirmButtonText: '确定',
+    cancelButtonText: '取消'
   })
   await userApi.resetPassword(row.id)
   ElMessage.success('密码已重置')

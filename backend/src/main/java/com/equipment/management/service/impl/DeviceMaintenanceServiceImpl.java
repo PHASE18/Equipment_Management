@@ -71,6 +71,7 @@ public class DeviceMaintenanceServiceImpl extends BaseCrudServiceImpl<DeviceMain
         if (entity.getIsResolved() == null) {
             entity.setIsResolved(0);
         }
+        entity.setId(null);
         save(entity);
         syncAttachmentPath(entity.getId());
         transitionDeviceToMaintaining(entity.getDeviceId());

@@ -58,17 +58,25 @@ export function useCrudPage<T extends { id?: number }>(options: CrudPageOptions<
     loadData()
   }
 
+  /** 清空 reactive 表单上的旧字段后再写入，避免残留 id 等主键。 */
+  function replaceForm(next: T) {
+    Object.keys(form as object).forEach(key => {
+      delete (form as Record<string, unknown>)[key]
+    })
+    Object.assign(form, next)
+  }
+
   /** 打开新增对话框并重置表单。 */
   function openCreate() {
     isEdit.value = false
-    Object.assign(form, options.defaultForm())
+    replaceForm(options.defaultForm())
     dialogVisible.value = true
   }
 
   /** 将选中行复制到表单并打开编辑对话框。 */
   function openEdit(row: T) {
     isEdit.value = true
-    Object.assign(form, options.defaultForm(), row)
+    replaceForm({ ...options.defaultForm(), ...row })
     dialogVisible.value = true
   }
 
@@ -80,7 +88,9 @@ export function useCrudPage<T extends { id?: number }>(options: CrudPageOptions<
         await options.updateItem?.(form)
         ElMessage.success('更新成功')
       } else {
-        await options.createItem?.(form)
+        const payload = { ...form } as T
+        delete (payload as { id?: number }).id
+        await options.createItem?.(payload)
         ElMessage.success('新增成功')
       }
       dialogVisible.value = false

@@ -36,8 +36,12 @@ async function handleLogin() {
   try {
     await authStore.login(loginForm) //把 loginForm（包含 username、password）发送给后端登录接口
     ElMessage.success('登录成功')
-    const redirect = typeof route.query.redirect === 'string' ? route.query.redirect : '/dashboard' // 跳回用户想访问的页面或默认跳转到 '/dashboard'（首页）
-    router.replace(redirect) //跳转到目标地址
+    // 优先跳回原目标；否则进入首个有权限菜单，无菜单时进 403，避免硬编码 /dashboard 导致白屏
+    const redirect =
+      typeof route.query.redirect === 'string'
+        ? route.query.redirect
+        : authStore.menus[0]?.path || '/403'
+    router.replace(redirect)
   } catch { 
     // 错误提示由 http 拦截器统一处理
   } finally {
