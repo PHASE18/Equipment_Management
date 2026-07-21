@@ -10,17 +10,33 @@ export interface Device extends BaseEntity {
   deviceName: string
   sn?: string
   assetNo?: string
+  /** 是否固定资产：0-否 1-是 */
+  isFixedAsset?: number
   brandCode?: string
   model?: string
   deviceTypeCode?: string
+  /** 管理部门 */
   departmentId?: number
+  /** 使用部门 */
+  useDepartmentId?: number
+  /** 责任人 */
   managerUserId?: number
+  /** 使用人 */
+  useUserName?: string
+  originalValue?: number
+  approvalNo?: string
   supplier?: string
   maintenanceCompany?: string
   purchaseDate?: string
+  manufactureDate?: string
+  onlineDate?: string
+  /** 到保日期 */
   warrantyEnd?: string
+  scrapDate?: string
   statusCode: string
+  /** 机柜U位 */
   cabinet?: string
+  /** 所在机房 */
   location?: string
   remark?: string
 }
@@ -31,6 +47,26 @@ export interface DeviceIp extends BaseEntity {
   managementIp?: string
   mask?: string
   gateway?: string
+  mountedBusiness?: string
+  networkZone?: string
+  mgmtLoginMethod?: string
+}
+
+export interface DeviceConfig extends BaseEntity {
+  deviceId?: number
+  cpu?: string
+  memory?: string
+  disk?: string
+  raid?: string
+  gpu?: string
+  fiberCard?: string
+  nic?: string
+  powerSupply?: string
+  os?: string
+  dbVersion?: string
+  firmware?: string
+  bios?: string
+  remark?: string
 }
 
 export interface Project extends BaseEntity {
@@ -88,6 +124,8 @@ export const DEVICE_STATUS_OPTIONS: DeviceStatusOption[] = [
   { label: '停用', value: 'STOPPED', type: 'info' },
   { label: '报废', value: 'SCRAPPED', type: 'danger' }
 ]
+
+export const MGMT_LOGIN_METHOD_OPTIONS = ['SSH', 'HTTPS', 'HTTP', 'IPMI', 'iDRAC', 'iLO', 'RDP', 'Telnet']
 
 export function getDeviceStatusLabel(code?: string) {
   return DEVICE_STATUS_OPTIONS.find(item => item.value === code)?.label || code || '-'

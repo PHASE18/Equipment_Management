@@ -44,6 +44,7 @@ E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\c
 E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\com\equipment\management\service\DeviceService.java
 E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\com\equipment\management\dto\response\MaintenanceDetailResponse.java
 E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\com\equipment\management\mapper\DeviceConfigMapper.java
+E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\com\equipment\management\controller\OptionsController.java
 E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\com\equipment\management\service\SysOperationLogService.java
 E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\com\equipment\management\service\SysUserService.java
 E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\com\equipment\management\controller\DeviceIpController.java
@@ -84,6 +85,7 @@ E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\c
 E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\com\equipment\management\controller\SysOperationLogController.java
 E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\com\equipment\management\service\impl\DeviceProjectServiceImpl.java
 E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\com\equipment\management\service\impl\DeviceIpServiceImpl.java
+E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\com\equipment\management\dto\response\UserOptionResponse.java
 E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\com\equipment\management\common\util\MinioUtils.java
 E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\com\equipment\management\common\util\FileUploadValidator.java
 E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\com\equipment\management\common\util\LoginLockManager.java

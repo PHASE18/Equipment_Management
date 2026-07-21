@@ -2,6 +2,7 @@
 import http from '@/api/http'
 import type { ChartItem, DashboardData, StatisticsQuery } from '@/types/statistics'
 
+//携带页面筛选条件（部门、项目、时间等）调用后端 /statistics/dashboard 接口，返回大盘图表、统计数字数据。
 export function getDashboardApi(params?: StatisticsQuery) {
   return http.get<DashboardData, DashboardData>('/statistics/dashboard', { params })
 }

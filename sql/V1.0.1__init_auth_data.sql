@@ -30,9 +30,8 @@ INSERT INTO `sys_permission` (`id`, `parent_id`, `permission_name`, `permission_
 (3, 0, '维修管理', 'maintenance:list', 1, '/maintenance', 'Tools', 3, 1),
 (4, 0, '项目管理', 'project:list', 1, '/projects', 'FolderOpened', 4, 1),
 (5, 0, '附件管理', 'attachment:list', 1, '/attachments', 'Paperclip', 5, 1),
-(6, 0, '统计分析', 'statistics:view', 1, '/statistics', 'PieChart', 6, 1),
-(7, 0, '系统管理', 'system:manage', 1, '/system', 'Setting', 7, 1),
-(8, 0, '日志审计', 'log:list', 1, '/audit-logs', 'DocumentChecked', 8, 1)
+(7, 0, '系统管理', 'system:manage', 1, '/system', 'Setting', 6, 1),
+(8, 0, '日志审计', 'log:list', 1, '/audit-logs', 'DocumentChecked', 7, 1)
 ON DUPLICATE KEY UPDATE `permission_name` = VALUES(`permission_name`);
 
 INSERT INTO `sys_role_permission` (`role_id`, `permission_id`)

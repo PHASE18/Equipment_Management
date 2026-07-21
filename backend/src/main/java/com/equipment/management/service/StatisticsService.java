@@ -1,4 +1,4 @@
-package com.equipment.management.service;
+package com.equipment.management.service; // 统计服务接口
 
 import com.equipment.management.dto.request.StatisticsQuery;
 import com.equipment.management.dto.response.DashboardResponse;
@@ -11,7 +11,7 @@ public interface StatisticsService {
 
     DashboardResponse dashboard(StatisticsQuery query);
 
-    Map<String, Object> homeStatistics(StatisticsQuery query);
+    Map<String, Object> homeStatistics(StatisticsQuery query);// 首页统计数据
 
     List<Map<String, Object>> brandStatistics(StatisticsQuery query);
 

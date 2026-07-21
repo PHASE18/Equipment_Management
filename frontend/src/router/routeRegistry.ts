@@ -21,12 +21,6 @@ export const routeRegistry: Record<string, RouteRegistryItem> = {
     title: '首页统计',
     component: () => import('@/views/dashboard/DashboardView.vue')
   },
-  'statistics:view': {
-    name: 'Statistics',
-    path: '/statistics',
-    title: '统计分析',
-    component: () => import('@/views/dashboard/DashboardView.vue')
-  },
   'system:user': {
     name: 'SystemUser',
     path: '/system/users',

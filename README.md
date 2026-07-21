@@ -26,3 +26,5 @@ OperationLogAspect（AOP 环绕通知）
         ├─ AuditMetadataResolver   → 解析操作类型、表名、业务ID、IP、浏览器
         ├─ EntitySnapshotLoader    → UPDATE/DELETE/状态变更前抓取 before_json
         └─ AuditLogService（@Async）→ 异步写入 sys_operation_log
+
+

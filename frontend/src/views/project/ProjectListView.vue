@@ -5,7 +5,8 @@ import type { FormInstance, FormRules } from 'element-plus'
 import AppPagination from '@/components/common/AppPagination.vue'
 import { useCrudPage } from '@/composables/useCrudPage'
 import { projectApi } from '@/api/project'
-import { buildDepartmentTreeOptions, departmentApi, findDepartmentName } from '@/api/system'
+import { buildDepartmentTreeOptions, findDepartmentName } from '@/api/system'
+import { optionsApi } from '@/api/options'
 import type { Project } from '@/types/device'
 import type { SysDepartment } from '@/types/system'
 
@@ -48,7 +49,7 @@ const formRules: FormRules = {
 }
 
 onMounted(async () => {
-  departments.value = await departmentApi.tree()
+  departments.value = await optionsApi.departments()
   await loadData()
 })
 </script>

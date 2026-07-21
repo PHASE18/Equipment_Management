@@ -26,7 +26,6 @@
         <mybatis-plus.version>3.5.6</mybatis-plus.version>
         <jjwt.version>0.12.5</jjwt.version>
         <easyexcel.version>3.3.4</easyexcel.version>
-        <poi.version>5.2.5</poi.version>
         <minio.version>8.5.10</minio.version>
     </properties>
 
@@ -85,16 +84,11 @@
             <artifactId>easyexcel</artifactId>
             <version>${easyexcel.version}</version>
         </dependency>
+        <!-- EasyExcel/POI 写 xlsx 需要 commons-io 2.12+（AbstractStreamBuilder） -->
         <dependency>
-            <groupId>org.apache.poi</groupId>
-            <artifactId>poi</artifactId>
-            <version>${poi.version}</version>
-        </dependency>
-        <!-- Apache POI OOXML 扩展：支持操作 Office 2007+ 格式文件（如 .xlsx、.docx） -->
-        <dependency>
-            <groupId>org.apache.poi</groupId>
-            <artifactId>poi-ooxml</artifactId>
-            <version>${poi.version}</version>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.15.1</version>
         </dependency>
         <!-- MinIO 客户端 SDK：用于对接 MinIO 对象存储服务，实现设备图片、附件等文件的上传下载 -->
         <dependency>

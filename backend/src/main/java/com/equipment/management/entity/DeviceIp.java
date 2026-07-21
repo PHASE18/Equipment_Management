@@ -15,4 +15,7 @@ public class DeviceIp extends BaseEntity {
     private String managementIp;
     private String mask;
     private String gateway;
+    private String mountedBusiness;
+    private String networkZone;
+    private String mgmtLoginMethod;
 }

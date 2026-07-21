@@ -14,18 +14,20 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.Map;
 
-@RestController
-@RequireAuth
-@RequirePermission(any = {"statistics:view", "dashboard:view"})
-@RequestMapping("/api/statistics")
-@RequiredArgsConstructor
+@RestController //当前类是接口控制器、返回值直接序列化为 JSON 返回前端
+@RequireAuth //当前类所有接口都需要登录认证
+@RequirePermission("dashboard:view") // 首页统计权限即可访问统计接口
+@RequestMapping("/api/statistics") //当前类所有接口的请求路径前缀为 /api/statistics
+@RequiredArgsConstructor //自动生成构造函数，注入 final 修饰的成员变量
 /** 首页汇总指标、趋势图和分类统计接口。 */
 public class StatisticsController {
 
     private final StatisticsService statisticsService;
-
+    
     @GetMapping("/dashboard")
     public Result<DashboardResponse> dashboard(StatisticsQuery query) {
+    // 1. 拿到前端所有筛选条件 query
+    // 2. 调用业务层查询数据
         return Result.success(statisticsService.dashboard(query));
     }
 

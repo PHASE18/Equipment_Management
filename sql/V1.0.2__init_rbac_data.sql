@@ -39,7 +39,7 @@ WHERE `permission_code` IN (
     'dashboard:view', 'device:list', 'device:view', 'device:add', 'device:edit', 'device:delete',
     'device:import', 'device:export', 'maintenance:list', 'maintenance:view', 'maintenance:add',
     'maintenance:edit', 'maintenance:delete', 'project:list', 'attachment:list', 'attachment:upload',
-    'attachment:download', 'attachment:delete', 'statistics:view', 'log:list', 'log:view'
+    'attachment:download', 'attachment:delete', 'log:list', 'log:view'
 )
 ON DUPLICATE KEY UPDATE `permission_id` = VALUES(`permission_id`);
 
@@ -49,7 +49,7 @@ SELECT 3, `id` FROM `sys_permission`
 WHERE `permission_code` IN (
     'dashboard:view', 'device:list', 'device:view', 'device:edit', 'device:export',
     'maintenance:list', 'maintenance:view', 'maintenance:add', 'maintenance:edit',
-    'attachment:list', 'attachment:upload', 'attachment:download', 'statistics:view'
+    'attachment:list', 'attachment:upload', 'attachment:download'
 )
 ON DUPLICATE KEY UPDATE `permission_id` = VALUES(`permission_id`);
 

@@ -1,21 +1,5 @@
 import { expect, test } from '@playwright/test'
-import { adminUser, loginAsAdmin, ok, type MockUser } from './helpers/auth'
-
-const statsUser: MockUser = {
-  ...adminUser,
-  permissions: [...adminUser.permissions, 'statistics:view', 'dashboard:view'],
-  menus: [
-    {
-      id: 6,
-      parentId: 0,
-      title: '统计分析',
-      path: '/statistics',
-      permissionCode: 'statistics:view',
-      icon: 'PieChart',
-      children: []
-    }
-  ]
-}
+import { adminUser, loginAsAdmin, ok } from './helpers/auth'
 
 const mockDashboard = {
   summary: {
@@ -46,17 +30,20 @@ const mockDashboard = {
 async function mockStatisticsApis(page: import('@playwright/test').Page) {
   const emptyPage = ok({ records: [], total: 0, pageNum: 1, pageSize: 200, pages: 0 })
 
-  await page.route('**/api/department/tree', async route => {
+  await page.route('**/api/options/departments', async route => {
     await route.fulfill({
       status: 200,
       contentType: 'application/json',
-      body: JSON.stringify(ok([{ id: 1, departmentName: '总部', parentId: 0, children: [] }]))
+      body: JSON.stringify(ok([{ id: 1, departmentName: '总部', parentId: 0 }]))
     })
   })
-  await page.route(/\/api\/project\/list.*/, async route => {
-    await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(emptyPage) })
+  await page.route('**/api/options/brands', async route => {
+    await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(ok([])) })
   })
-  await page.route(/\/api\/(device-brand|device-type|dict).*/, async route => {
+  await page.route('**/api/options/device-types', async route => {
+    await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(ok([])) })
+  })
+  await page.route(/\/api\/project\/list.*/, async route => {
     await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(emptyPage) })
   })
   await page.route(/\/api\/statistics\/dashboard.*/, async route => {
@@ -68,13 +55,13 @@ async function mockStatisticsApis(page: import('@playwright/test').Page) {
   })
 }
 
-test.describe('Statistics module E2E', () => {
+test.describe('Dashboard statistics E2E', () => {
   test('load summary cards and charts', async ({ page }) => {
     await mockStatisticsApis(page)
     await loginAsAdmin(page, {
-      path: '/statistics',
+      path: '/dashboard',
       testId: 'statistics-page',
-      user: statsUser
+      user: adminUser
     })
 
     await expect(page.getByTestId('statistics-page')).toBeVisible()
@@ -88,17 +75,20 @@ test.describe('Statistics module E2E', () => {
   test('search and reset filters trigger reload', async ({ page }) => {
     let requestCount = 0
     const emptyPage = ok({ records: [], total: 0, pageNum: 1, pageSize: 200, pages: 0 })
-    await page.route('**/api/department/tree', async route => {
+    await page.route('**/api/options/departments', async route => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
-        body: JSON.stringify(ok([{ id: 1, departmentName: '总部', parentId: 0, children: [] }]))
+        body: JSON.stringify(ok([{ id: 1, departmentName: '总部', parentId: 0 }]))
       })
     })
-    await page.route(/\/api\/project\/list.*/, async route => {
-      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(emptyPage) })
+    await page.route('**/api/options/brands', async route => {
+      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(ok([])) })
     })
-    await page.route(/\/api\/(device-brand|device-type)\/.*/, async route => {
+    await page.route('**/api/options/device-types', async route => {
+      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(ok([])) })
+    })
+    await page.route(/\/api\/project\/list.*/, async route => {
       await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(emptyPage) })
     })
     await page.route(/\/api\/statistics\/dashboard.*/, async route => {
@@ -111,9 +101,9 @@ test.describe('Statistics module E2E', () => {
     })
 
     await loginAsAdmin(page, {
-      path: '/statistics',
+      path: '/dashboard',
       testId: 'statistics-page',
-      user: statsUser
+      user: adminUser
     })
 
     const before = requestCount

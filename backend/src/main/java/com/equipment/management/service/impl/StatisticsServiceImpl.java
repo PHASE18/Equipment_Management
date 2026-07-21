@@ -1,4 +1,4 @@
-package com.equipment.management.service.impl;
+package com.equipment.management.service.impl; // 统计服务实现
 
 import com.equipment.management.common.util.StatisticsFilterBuilder;
 import com.equipment.management.dto.StatisticsFilter;
@@ -23,12 +23,12 @@ public class StatisticsServiceImpl implements StatisticsService {
     private final StatisticsMapper statisticsMapper;
 
     @Override
-    public DashboardResponse dashboard(StatisticsQuery query) {
-        StatisticsFilter filter = StatisticsFilterBuilder.from(query);
-        Map<String, Object> summaryMap = statisticsMapper.selectDeviceSummary(filter);
-        Long monthMaintenanceCount = statisticsMapper.selectMonthMaintenanceCount(filter);
+    public DashboardResponse dashboard(StatisticsQuery query) { // 仪表盘统计数据查询
+        StatisticsFilter filter = StatisticsFilterBuilder.from(query); // 将查询参数转换为统计筛选条件
+        Map<String, Object> summaryMap = statisticsMapper.selectDeviceSummary(filter); // 查询设备汇总数据
+        Long monthMaintenanceCount = statisticsMapper.selectMonthMaintenanceCount(filter); // 查询本月维修数量
 
-        return DashboardResponse.builder()
+        return DashboardResponse.builder() //把 Map 转成 DashboardResponse / 图表列表再返回
                 .summary(buildSummary(summaryMap, monthMaintenanceCount))
                 .statusChart(toChartItems(statisticsMapper.selectStatusDistribution(filter)))
                 .brandChart(toChartItems(statisticsMapper.selectBrandDistribution(filter)))
@@ -47,8 +47,8 @@ public class StatisticsServiceImpl implements StatisticsService {
     }
 
     @Override
-    public Map<String, Object> homeStatistics(StatisticsQuery query) {
-        DashboardResponse.DashboardSummary summary = dashboard(query).getSummary();
+    public Map<String, Object> homeStatistics(StatisticsQuery query) { // 首页统计数据查询
+        DashboardResponse.DashboardSummary summary = dashboard(query).getSummary(); // 调用 dashboard 方法获取汇总数据
         Map<String, Object> data = new HashMap<>();
         data.put("deviceTotal", summary.getDeviceTotal());
         data.put("inUseCount", summary.getInUseCount());

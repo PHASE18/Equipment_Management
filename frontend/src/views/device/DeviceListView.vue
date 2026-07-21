@@ -12,7 +12,8 @@ import {
   exportDevicesApi,
   pageDevicesApi
 } from '@/api/device'
-import { buildDepartmentTreeOptions, departmentApi, findDepartmentName } from '@/api/system'
+import { optionsApi } from '@/api/options'
+import { buildDepartmentTreeOptions, findDepartmentName } from '@/api/system'
 import type { SysDepartment } from '@/types/system'
 import type { Device, DeviceStatusChangeResult } from '@/types/device'
 import { getDeviceStatusLabel, getDeviceStatusType } from '@/types/device'
@@ -40,7 +41,7 @@ const query = ref({
 const departmentOptions = computed(() => buildDepartmentTreeOptions(departments.value))
 
 async function loadDepartments() {
-  departments.value = await departmentApi.tree()
+  departments.value = await optionsApi.departments()
 }
 
 async function loadData() {
@@ -112,13 +113,14 @@ async function handleExport() {
   exporting.value = true
   try {
     await exportDevicesApi({
-      pageNum: 1,
-      pageSize: 20,
       keyword: query.value.keyword || undefined,
       status: query.value.status || undefined,
       departmentId: query.value.departmentId
     })
     ElMessage.success('导出成功')
+  } catch (error) {
+    const message = error instanceof Error ? error.message : '导出失败'
+    ElMessage.error(message)
   } finally {
     exporting.value = false
   }
@@ -158,14 +160,14 @@ onMounted(async () => {
       <el-form-item label="状态">
         <StatusSelect v-model="query.status" />
       </el-form-item>
-      <el-form-item label="部门">
+      <el-form-item label="管理部门">
         <el-tree-select
           v-model="query.departmentId"
           :data="departmentOptions"
           check-strictly
           clearable
           filterable
-          placeholder="全部部门"
+          placeholder="全部管理部门"
           style="width: 180px"
         />
       </el-form-item>
@@ -181,7 +183,7 @@ onMounted(async () => {
       <el-table-column prop="sn" label="SN号" min-width="130" show-overflow-tooltip />
       <el-table-column prop="brandCode" label="品牌" width="100" />
       <el-table-column prop="deviceTypeCode" label="类型" width="100" />
-      <el-table-column label="部门" min-width="120">
+      <el-table-column label="管理部门" min-width="120">
         <template #default="{ row }">
           {{ findDepartmentName(departments, row.departmentId) }}
         </template>
@@ -193,7 +195,7 @@ onMounted(async () => {
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="location" label="位置" min-width="140" show-overflow-tooltip />
+      <el-table-column prop="location" label="所在机房" min-width="140" show-overflow-tooltip />
       <el-table-column prop="createTime" label="创建时间" min-width="170" />
       <el-table-column label="操作" width="280" fixed="right">
         <template #default="{ row }">

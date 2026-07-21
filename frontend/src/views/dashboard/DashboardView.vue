@@ -4,7 +4,8 @@ import { computed, onMounted, reactive, ref } from 'vue'
 import DashboardChartCard from '@/components/dashboard/DashboardChartCard.vue'
 import { getDashboardApi } from '@/api/statistics'
 import { pageProjectsApi } from '@/api/project'
-import { buildDepartmentTreeOptions, departmentApi, deviceBrandApi, deviceTypeApi } from '@/api/system'
+import { optionsApi } from '@/api/options'
+import { buildDepartmentTreeOptions } from '@/api/system'
 import type { DashboardData, StatisticsQuery } from '@/types/statistics'
 import type { SysDepartment, SysDict } from '@/types/system'
 import type { Project } from '@/types/device'
@@ -164,16 +165,16 @@ const scrapOption = computed(() =>
 )
 
 async function loadFilterOptions() {
-  const [deptList, projectPage, brandPage, typePage] = await Promise.all([
-    departmentApi.tree(),
+  const [deptList, projectPage, brandList, typeList] = await Promise.all([
+    optionsApi.departments(),
     pageProjectsApi({ pageNum: 1, pageSize: 200 }),
-    deviceBrandApi.page({ pageNum: 1, pageSize: 200 }),
-    deviceTypeApi.page({ pageNum: 1, pageSize: 200 })
+    optionsApi.brands(),
+    optionsApi.deviceTypes()
   ])
   departments.value = deptList
   projects.value = projectPage.records
-  brands.value = brandPage.records
-  deviceTypes.value = typePage.records
+  brands.value = brandList
+  deviceTypes.value = typeList
 }
 
 async function loadDashboard() {

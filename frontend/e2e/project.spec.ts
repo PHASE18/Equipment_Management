@@ -11,7 +11,7 @@ interface MockProject {
 }
 
 async function mockProjectModule(page: Page, store: { projects: MockProject[] }) {
-  await page.route('**/api/department/tree', async route => {
+  await page.route('**/api/options/departments', async route => {
     await route.fulfill({
       status: 200,
       contentType: 'application/json',
@@ -20,8 +20,7 @@ async function mockProjectModule(page: Page, store: { projects: MockProject[] })
           {
             id: 1,
             departmentName: '总部',
-            parentId: 0,
-            children: []
+            parentId: 0
           }
         ])
       )

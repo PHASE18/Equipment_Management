@@ -7,18 +7,22 @@ import UploadPanel from '@/components/common/UploadPanel.vue'
 import StatusSelect from '@/components/common/StatusSelect.vue'
 import {
   createDeviceApi,
+  getDeviceConfigApi,
   getDeviceIpApi,
   listDeviceProjectIdsApi,
   pageDevicesApi,
+  saveDeviceConfigApi,
   saveDeviceIpApi,
   syncDeviceProjectsApi,
   updateDeviceApi
 } from '@/api/device'
 import { listDeviceFilesApi } from '@/api/file'
 import { pageProjectsApi } from '@/api/project'
-import { buildDepartmentTreeOptions, departmentApi, deviceBrandApi, deviceTypeApi } from '@/api/system'
+import { optionsApi, type UserOption } from '@/api/options'
+import { buildDepartmentTreeOptions } from '@/api/system'
 import type { SysDepartment, SysDict } from '@/types/system'
-import type { Device, DeviceIp, Project } from '@/types/device'
+import type { Device, DeviceConfig, DeviceIp, Project } from '@/types/device'
+import { MGMT_LOGIN_METHOD_OPTIONS } from '@/types/device'
 import type { FileMeta } from '@/types/file'
 
 const visible = defineModel<boolean>({ required: true })
@@ -40,6 +44,7 @@ const departments = ref<SysDepartment[]>([])
 const brands = ref<SysDict[]>([])
 const deviceTypes = ref<SysDict[]>([])
 const projects = ref<Project[]>([])
+const users = ref<UserOption[]>([])
 const projectIds = ref<number[]>([])
 const contractFiles = ref<FileMeta[]>([])
 const photoFiles = ref<FileMeta[]>([])
@@ -48,32 +53,65 @@ const isEdit = computed(() => !!currentDeviceId.value)
 
 const departmentOptions = computed(() => buildDepartmentTreeOptions(departments.value))
 
-const form = reactive<Device>({
+const emptyDevice = (): Device => ({
   deviceNo: '',
   deviceName: '',
   sn: '',
   assetNo: '',
+  isFixedAsset: 0,
   brandCode: '',
   model: '',
   deviceTypeCode: '',
   departmentId: undefined,
+  useDepartmentId: undefined,
+  managerUserId: undefined,
+  useUserName: '',
+  originalValue: undefined,
+  approvalNo: '',
   supplier: '',
   maintenanceCompany: '',
   purchaseDate: '',
+  manufactureDate: '',
+  onlineDate: '',
   warrantyEnd: '',
+  scrapDate: '',
   statusCode: 'PURCHASING',
   cabinet: '',
   location: '',
   remark: ''
 })
 
-const ipForm = reactive<DeviceIp>({
+const emptyIp = (): DeviceIp => ({
   deviceId: undefined,
   businessIp: '',
   managementIp: '',
   mask: '',
-  gateway: ''
+  gateway: '',
+  mountedBusiness: '',
+  networkZone: '',
+  mgmtLoginMethod: ''
 })
+
+const emptyConfig = (): DeviceConfig => ({
+  deviceId: undefined,
+  cpu: '',
+  memory: '',
+  disk: '',
+  raid: '',
+  gpu: '',
+  fiberCard: '',
+  nic: '',
+  powerSupply: '',
+  os: '',
+  dbVersion: '',
+  firmware: '',
+  bios: '',
+  remark: ''
+})
+
+const form = reactive<Device>(emptyDevice())
+const ipForm = reactive<DeviceIp>(emptyIp())
+const configForm = reactive<DeviceConfig>(emptyConfig())
 
 const formRules: FormRules = {
   deviceNo: [{ required: true, message: '请输入设备编号', trigger: 'blur' }],
@@ -113,31 +151,9 @@ const ipRules: FormRules = {
 }
 
 function resetForm() {
-  Object.assign(form, {
-    deviceNo: '',
-    deviceName: '',
-    sn: '',
-    assetNo: '',
-    brandCode: '',
-    model: '',
-    deviceTypeCode: '',
-    departmentId: undefined,
-    supplier: '',
-    maintenanceCompany: '',
-    purchaseDate: '',
-    warrantyEnd: '',
-    statusCode: 'PURCHASING',
-    cabinet: '',
-    location: '',
-    remark: ''
-  })
-  Object.assign(ipForm, {
-    deviceId: undefined,
-    businessIp: '',
-    managementIp: '',
-    mask: '',
-    gateway: ''
-  })
+  Object.assign(form, emptyDevice())
+  Object.assign(ipForm, emptyIp())
+  Object.assign(configForm, emptyConfig())
   projectIds.value = []
   contractFiles.value = []
   photoFiles.value = []
@@ -145,30 +161,56 @@ function resetForm() {
 }
 
 async function loadOptions() {
-  const [deptList, brandPage, typePage, projectPage] = await Promise.all([
-    departmentApi.tree(),
-    deviceBrandApi.page({ pageNum: 1, pageSize: 200 }),
-    deviceTypeApi.page({ pageNum: 1, pageSize: 200 }),
-    pageProjectsApi({ pageNum: 1, pageSize: 200 })
+  const [deptList, brandList, typeList, projectPage, userList] = await Promise.all([
+    optionsApi.departments(),
+    optionsApi.brands(),
+    optionsApi.deviceTypes(),
+    pageProjectsApi({ pageNum: 1, pageSize: 200 }),
+    optionsApi.users()
   ])
   departments.value = deptList
-  brands.value = brandPage.records
-  deviceTypes.value = typePage.records
+  brands.value = brandList
+  deviceTypes.value = typeList
   projects.value = projectPage.records
+  users.value = userList
 }
 
 async function loadRelatedData(deviceId: number) {
-  const [ip, ids, files] = await Promise.all([
+  const [ip, config, ids, files] = await Promise.all([
     getDeviceIpApi(deviceId).catch(() => null),
+    getDeviceConfigApi(deviceId).catch(() => null),
     listDeviceProjectIdsApi(deviceId),
     listDeviceFilesApi(deviceId)
   ])
   Object.assign(ipForm, {
+    ...emptyIp(),
     deviceId,
     businessIp: ip?.businessIp || '',
     managementIp: ip?.managementIp || '',
     mask: ip?.mask || '',
-    gateway: ip?.gateway || ''
+    gateway: ip?.gateway || '',
+    mountedBusiness: ip?.mountedBusiness || '',
+    networkZone: ip?.networkZone || '',
+    mgmtLoginMethod: ip?.mgmtLoginMethod || '',
+    id: ip?.id
+  })
+  Object.assign(configForm, {
+    ...emptyConfig(),
+    deviceId,
+    cpu: config?.cpu || '',
+    memory: config?.memory || '',
+    disk: config?.disk || '',
+    raid: config?.raid || '',
+    gpu: config?.gpu || '',
+    fiberCard: config?.fiberCard || '',
+    nic: config?.nic || '',
+    powerSupply: config?.powerSupply || '',
+    os: config?.os || '',
+    dbVersion: config?.dbVersion || '',
+    firmware: config?.firmware || '',
+    bios: config?.bios || '',
+    remark: config?.remark || '',
+    id: config?.id
   })
   projectIds.value = ids
   contractFiles.value = files.filter(item => item.fileTypeCode === 'PURCHASE_CONTRACT')
@@ -186,7 +228,9 @@ watch(
     await loadOptions()
     if (device?.id) {
       currentDeviceId.value = device.id
-      Object.assign(form, device)
+      Object.assign(form, emptyDevice(), device, {
+        isFixedAsset: device.isFixedAsset ?? 0
+      })
       await loadRelatedData(device.id)
     } else {
       currentDeviceId.value = undefined
@@ -197,7 +241,33 @@ watch(
 )
 
 function hasIpData() {
-  return !!(ipForm.businessIp || ipForm.managementIp || ipForm.mask || ipForm.gateway)
+  return !!(
+    ipForm.businessIp ||
+    ipForm.managementIp ||
+    ipForm.mask ||
+    ipForm.gateway ||
+    ipForm.mountedBusiness ||
+    ipForm.networkZone ||
+    ipForm.mgmtLoginMethod
+  )
+}
+
+function hasConfigData() {
+  return !!(
+    configForm.cpu ||
+    configForm.memory ||
+    configForm.disk ||
+    configForm.raid ||
+    configForm.gpu ||
+    configForm.fiberCard ||
+    configForm.nic ||
+    configForm.powerSupply ||
+    configForm.os ||
+    configForm.dbVersion ||
+    configForm.firmware ||
+    configForm.bios ||
+    configForm.remark
+  )
 }
 
 async function resolveDeviceIdAfterCreate() {
@@ -210,6 +280,13 @@ async function saveIp(deviceId: number) {
     return
   }
   await saveDeviceIpApi({ ...ipForm, deviceId })
+}
+
+async function saveConfig(deviceId: number) {
+  if (!hasConfigData() && !configForm.id) {
+    return
+  }
+  await saveDeviceConfigApi({ ...configForm, deviceId })
 }
 
 async function saveProjects(deviceId: number) {
@@ -240,6 +317,7 @@ async function handleSubmit() {
     }
 
     await saveIp(deviceId)
+    await saveConfig(deviceId)
     await saveProjects(deviceId)
     ElMessage.success(isEdit.value ? '设备更新成功' : '设备创建成功，可继续上传附件')
     emit('success')
@@ -263,13 +341,13 @@ function handleFinish() {
   <el-dialog
     v-model="visible"
     :title="isEdit ? '编辑设备' : '新增设备'"
-    width="860px"
+    width="920px"
     destroy-on-close
     class="device-form-dialog"
   >
     <el-tabs v-model="activeTab">
       <el-tab-pane label="基本信息" name="basic">
-        <el-form ref="formRef" :model="form" :rules="formRules" label-width="96px">
+        <el-form ref="formRef" :model="form" :rules="formRules" label-width="110px">
           <el-row :gutter="16">
             <el-col :span="12">
               <el-form-item label="设备编号" prop="deviceNo">
@@ -289,6 +367,23 @@ function handleFinish() {
             <el-col :span="12">
               <el-form-item label="资产编号">
                 <el-input v-model="form.assetNo" placeholder="资产编号" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="是否固定资产">
+                <el-switch
+                  v-model="form.isFixedAsset"
+                  :active-value="1"
+                  :inactive-value="0"
+                  inline-prompt
+                  active-text="是"
+                  inactive-text="否"
+                />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="设备状态" prop="statusCode">
+                <StatusSelect v-model="form.statusCode" style="width: 100%" />
               </el-form-item>
             </el-col>
             <el-col :span="12">
@@ -327,41 +422,67 @@ function handleFinish() {
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item label="所属部门">
+              <el-form-item label="批准文号">
+                <el-input v-model="form.approvalNo" placeholder="批准文号" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="管理部门">
                 <el-tree-select
                   v-model="form.departmentId"
                   :data="departmentOptions"
                   check-strictly
                   clearable
                   filterable
-                  placeholder="选择部门"
+                  placeholder="选择管理部门"
                   style="width: 100%"
                 />
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item label="设备状态" prop="statusCode">
-                <StatusSelect v-model="form.statusCode" style="width: 100%" />
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="采购日期">
-                <el-date-picker
-                  v-model="form.purchaseDate"
-                  type="date"
-                  value-format="YYYY-MM-DD"
-                  placeholder="采购日期"
+              <el-form-item label="使用部门">
+                <el-tree-select
+                  v-model="form.useDepartmentId"
+                  :data="departmentOptions"
+                  check-strictly
+                  clearable
+                  filterable
+                  placeholder="选择使用部门"
                   style="width: 100%"
                 />
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item label="保修截止">
-                <el-date-picker
-                  v-model="form.warrantyEnd"
-                  type="date"
-                  value-format="YYYY-MM-DD"
-                  placeholder="保修截止日期"
+              <el-form-item label="责任人">
+                <el-select
+                  v-model="form.managerUserId"
+                  clearable
+                  filterable
+                  placeholder="选择责任人"
+                  style="width: 100%"
+                >
+                  <el-option
+                    v-for="item in users"
+                    :key="item.id"
+                    :label="item.realName ? `${item.realName}（${item.username}）` : item.username"
+                    :value="item.id!"
+                  />
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="使用人">
+                <el-input v-model="form.useUserName" placeholder="使用人姓名" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="设备原值">
+                <el-input-number
+                  v-model="form.originalValue"
+                  :min="0"
+                  :precision="2"
+                  :controls="false"
+                  placeholder="原值"
                   style="width: 100%"
                 />
               </el-form-item>
@@ -377,13 +498,68 @@ function handleFinish() {
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item label="机柜位置">
-                <el-input v-model="form.cabinet" placeholder="机柜位置" />
+              <el-form-item label="采购日期">
+                <el-date-picker
+                  v-model="form.purchaseDate"
+                  type="date"
+                  value-format="YYYY-MM-DD"
+                  placeholder="采购日期"
+                  style="width: 100%"
+                />
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item label="物理位置">
-                <el-input v-model="form.location" placeholder="物理位置" />
+              <el-form-item label="出厂日期">
+                <el-date-picker
+                  v-model="form.manufactureDate"
+                  type="date"
+                  value-format="YYYY-MM-DD"
+                  placeholder="出厂日期"
+                  style="width: 100%"
+                />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="上架日期">
+                <el-date-picker
+                  v-model="form.onlineDate"
+                  type="date"
+                  value-format="YYYY-MM-DD"
+                  placeholder="上架日期"
+                  style="width: 100%"
+                />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="到保日期">
+                <el-date-picker
+                  v-model="form.warrantyEnd"
+                  type="date"
+                  value-format="YYYY-MM-DD"
+                  placeholder="到保日期"
+                  style="width: 100%"
+                />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="报废日期">
+                <el-date-picker
+                  v-model="form.scrapDate"
+                  type="date"
+                  value-format="YYYY-MM-DD"
+                  placeholder="报废日期"
+                  style="width: 100%"
+                />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="所在机房">
+                <el-input v-model="form.location" placeholder="所在机房" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="机柜U位">
+                <el-input v-model="form.cabinet" placeholder="机柜U位，如 A01-U12" />
               </el-form-item>
             </el-col>
             <el-col :span="24">
@@ -395,8 +571,84 @@ function handleFinish() {
         </el-form>
       </el-tab-pane>
 
+      <el-tab-pane label="配置信息" name="config">
+        <el-form :model="configForm" label-width="110px">
+          <el-divider content-position="left">设备配置</el-divider>
+          <el-row :gutter="16">
+            <el-col :span="12">
+              <el-form-item label="CPU">
+                <el-input v-model="configForm.cpu" placeholder="CPU" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="内存">
+                <el-input v-model="configForm.memory" placeholder="内存" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="硬盘">
+                <el-input v-model="configForm.disk" placeholder="硬盘" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="Raid">
+                <el-input v-model="configForm.raid" placeholder="Raid" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="GPU">
+                <el-input v-model="configForm.gpu" placeholder="GPU" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="光纤卡">
+                <el-input v-model="configForm.fiberCard" placeholder="光纤卡" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="网卡">
+                <el-input v-model="configForm.nic" placeholder="网卡" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="电源">
+                <el-input v-model="configForm.powerSupply" placeholder="电源" />
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-divider content-position="left">设备基本信息</el-divider>
+          <el-row :gutter="16">
+            <el-col :span="12">
+              <el-form-item label="系统">
+                <el-input v-model="configForm.os" placeholder="操作系统" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="数据库版本">
+                <el-input v-model="configForm.dbVersion" placeholder="数据库版本" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="固件版本">
+                <el-input v-model="configForm.firmware" placeholder="固件版本" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="BIOS">
+                <el-input v-model="configForm.bios" placeholder="BIOS版本" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="24">
+              <el-form-item label="备注">
+                <el-input v-model="configForm.remark" type="textarea" :rows="2" placeholder="配置备注" />
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </el-form>
+      </el-tab-pane>
+
       <el-tab-pane label="网络信息" name="network">
-        <el-form ref="ipFormRef" :model="ipForm" :rules="ipRules" label-width="96px">
+        <el-form ref="ipFormRef" :model="ipForm" :rules="ipRules" label-width="130px">
           <el-row :gutter="16">
             <el-col :span="12">
               <el-form-item label="业务IP" prop="businessIp">
@@ -418,6 +670,31 @@ function handleFinish() {
                 <el-input v-model="ipForm.gateway" placeholder="如 192.168.1.1" />
               </el-form-item>
             </el-col>
+            <el-col :span="12">
+              <el-form-item label="挂载业务">
+                <el-input v-model="ipForm.mountedBusiness" placeholder="挂载业务" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="所属网络">
+                <el-input v-model="ipForm.networkZone" placeholder="所属网络" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="管理地址登录方式">
+                <el-select
+                  v-model="ipForm.mgmtLoginMethod"
+                  clearable
+                  filterable
+                  allow-create
+                  default-first-option
+                  placeholder="如 SSH / HTTPS / IPMI"
+                  style="width: 100%"
+                >
+                  <el-option v-for="item in MGMT_LOGIN_METHOD_OPTIONS" :key="item" :label="item" :value="item" />
+                </el-select>
+              </el-form-item>
+            </el-col>
           </el-row>
           <el-alert
             title="业务IP与管理IP在系统内全局唯一，保存时将自动校验。"
@@ -428,15 +705,15 @@ function handleFinish() {
         </el-form>
       </el-tab-pane>
 
-      <el-tab-pane label="项目关联" name="project">
-        <el-form label-width="96px">
-          <el-form-item label="关联项目">
+      <el-tab-pane label="所属项目" name="project">
+        <el-form label-width="110px">
+          <el-form-item label="所属项目">
             <el-select
               v-model="projectIds"
               multiple
               clearable
               filterable
-              placeholder="选择关联项目"
+              placeholder="选择所属项目"
               style="width: 100%"
             >
               <el-option

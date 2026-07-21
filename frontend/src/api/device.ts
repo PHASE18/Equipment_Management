@@ -2,7 +2,14 @@
 import axios from 'axios'
 import http from '@/api/http'
 import type { PageQuery, PageResult } from '@/types/api'
-import type { Device, DeviceIp, DeviceStatusChangeResult, DeviceStatusLogItem, LifecycleTransitionRequest } from '@/types/device'
+import type {
+  Device,
+  DeviceConfig,
+  DeviceIp,
+  DeviceStatusChangeResult,
+  DeviceStatusLogItem,
+  LifecycleTransitionRequest
+} from '@/types/device'
 import { getToken } from '@/utils/token'
 
 export interface DeviceQuery extends PageQuery {
@@ -44,6 +51,14 @@ export function saveDeviceIpApi(data: DeviceIp) {
   return http.post<void, void>('/ip/save', data)
 }
 
+export function getDeviceConfigApi(deviceId: number) {
+  return http.get<DeviceConfig | null, DeviceConfig | null>(`/device-config/device/${deviceId}`)
+}
+
+export function saveDeviceConfigApi(data: DeviceConfig) {
+  return http.post<void, void>('/device-config/save', data)
+}
+
 export function listDeviceProjectIdsApi(deviceId: number) {
   return http.get<number[], number[]>(`/device-project/by-device/${deviceId}`)
 }
@@ -71,6 +86,34 @@ export async function exportDevicesApi(params: DeviceQuery) {
     responseType: 'blob',
     headers: token ? { Authorization: `Bearer ${token}` } : undefined
   })
+
+  const contentType = String(response.headers['content-type'] || '')
+  if (contentType.includes('application/json')) {
+    const text = await (response.data as Blob).text()
+    let message = '导出失败'
+    try {
+      const body = JSON.parse(text) as { message?: string; code?: number }
+      message = body.message || message
+    } catch {
+      message = text || message
+    }
+    throw new Error(message)
+  }
+
+  // Some gateways still return JSON with wrong content-type; sniff payload.
+  const probe = await (response.data as Blob).slice(0, 1).text()
+  if (probe === '{' || probe === '[') {
+    const text = await (response.data as Blob).text()
+    let message = '导出失败'
+    try {
+      const body = JSON.parse(text) as { message?: string }
+      message = body.message || message
+    } catch {
+      message = text || message
+    }
+    throw new Error(message)
+  }
+
   const blob = new Blob([response.data], {
     type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
   })

@@ -50,13 +50,21 @@ public final class ExcelUtils {
 
     public static <T> void write(HttpServletResponse response, String filename, String sheetName,
                                  Class<T> headClass, List<T> data) {
-        setDownloadHeader(response, filename);
         try {
-            EasyExcel.write(response.getOutputStream(), headClass)
+            // Write to memory first so failures return JSON instead of a broken xlsx stream.
+            java.io.ByteArrayOutputStream buffer = new java.io.ByteArrayOutputStream();
+            EasyExcel.write(buffer, headClass)
                     .sheet(StringUtils.hasText(sheetName) ? sheetName : "sheet1")
                     .doWrite(data);
+            byte[] bytes = buffer.toByteArray();
+            setDownloadHeader(response, filename);
+            response.setContentLength(bytes.length);
+            response.getOutputStream().write(bytes);
+            response.getOutputStream().flush();
         } catch (IOException e) {
             throw new BusinessException(ErrorCode.INTERNAL_ERROR, "Failed to write Excel file");
+        } catch (RuntimeException e) {
+            throw new BusinessException(ErrorCode.INTERNAL_ERROR, "Failed to generate Excel: " + e.getMessage());
         }
     }
 
