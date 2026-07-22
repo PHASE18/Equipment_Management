@@ -21,7 +21,6 @@ async function handleLogout() {
         <div class="brand-mark">EM</div>
         <div>
           <strong>设备管理系统</strong>
-<!--          <span>Equipment</span>-->
         </div>
       </div>
 
@@ -56,99 +55,114 @@ async function handleLogout() {
 .app-shell {
   height: 100%;
 }
-/* 侧边栏主背景 */
+
 .app-aside {
   display: flex;
   flex-direction: column;
-  background: #E6F2DD;
-  color: #495057;
+  background: var(--em-sidebar-bg);
+  color: var(--em-sidebar-text);
 }
-/* 侧边栏品牌 */
+
 .brand {
   display: flex;
   align-items: center;
   gap: 12px;
   height: 64px;
   padding: 0 18px;
-  border-bottom: 1px solid rgba(91, 89, 89, 0.1);
+  border-bottom: 1px solid rgb(255 255 255 / 8%);
 }
-/* 侧边栏品牌图标 */
+
 .brand-mark {
   display: grid;
   width: 34px;
   height: 34px;
   place-items: center;
-  border-radius: 12px;
-  background: #6a737b;
+  border-radius: 8px;
+  background: var(--em-primary);
+  color: #fff;
   font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.02em;
 }
-/* 侧边栏品牌文字 */
-.brand span {
-  display: block;
-  margin-top: 2px;
-  color: #4c4e50;
-  font-size: 12px;
+
+.brand strong {
+  color: var(--em-sidebar-text);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
 }
-/* 侧边栏菜单 */
+
 .side-menu {
   flex: 1;
   border-right: 0;
   background: transparent;
+  --el-menu-bg-color: transparent;
+  --el-menu-hover-bg-color: #243041;
+  --el-menu-text-color: var(--em-sidebar-muted);
+  --el-menu-active-color: #fff;
 }
-/* 侧边栏菜单项 */  
+
 .side-menu :deep(.el-menu-item),
 .side-menu :deep(.el-sub-menu__title) {
-  color: #659287;
+  color: var(--em-sidebar-muted);
 }
-/* 侧边栏菜单项激活 */
+
+.side-menu :deep(.el-menu-item:hover),
+.side-menu :deep(.el-sub-menu__title:hover) {
+  color: var(--em-sidebar-text);
+  background: #243041;
+}
+
 .side-menu :deep(.el-menu-item.is-active) {
   color: #fff;
-  background: #9aa1a8; 
+  background: var(--em-sidebar-active);
+  font-weight: 500;
 }
-/* 顶部用户区 */
+
 .app-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   height: 64px;
   padding: 0 24px;
-  background: #fff;
-  border-bottom: 1px solid #e5e7eb;
+  background: var(--em-surface);
+  border-bottom: 1px solid var(--em-border);
 }
-/* 顶部用户区标题 */
+
 .header-title {
   font-size: 18px;
   font-weight: 650;
+  color: var(--em-text);
 }
-/* 顶部用户区副标题 */
+
 .header-subtitle {
   margin-top: 3px;
-  color: #6b7280;
+  color: var(--em-text-secondary);
   font-size: 12px;
 }
-/* 顶部用户区数据范围标签 */
+
 .scope-tag {
   margin-left: 8px;
   padding: 2px 8px;
-  border-radius: 999px;
-  background: #eff6ff;
-  color: #3d6437;
+  border-radius: 4px;
+  background: var(--el-color-primary-light-9);
+  color: var(--em-primary);
 }
-/* 顶部用户区操作按钮 */
+
 .header-actions {
   display: flex;
   align-items: center;
   gap: 12px;
 }
-/* 顶部用户区用户名 */
+
 .user-name {
   color: #374151;
   font-size: 14px;
 }
-/* 内容区 */
+
 .app-main {
   overflow: auto;
   padding: 20px 24px;
-  background: #f5f7fb;
+  background: var(--em-page-bg);
 }
 </style>

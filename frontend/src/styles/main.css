@@ -1,8 +1,28 @@
 :root {
-  color: #1f2937;
-  background: #f5f7fb;
+  /* 简约大气：深侧栏 + 中性灰底 + 低饱和蓝主色 */
+  --em-sidebar-bg: #1b2430;
+  --em-sidebar-text: #e8edf2;
+  --em-sidebar-muted: #a8b3c0;
+  --em-sidebar-active: #2a3648;
+  --em-primary: #2f5d7a;
+  --em-surface: #ffffff;
+  --em-page-bg: #f3f5f8;
+  --em-border: #e6eaf0;
+  --em-text: #1f2937;
+  --em-text-secondary: #6b7280;
+
+  --el-color-primary: #2f5d7a;
+  --el-color-primary-light-3: #5a8199;
+  --el-color-primary-light-5: #87a5b6;
+  --el-color-primary-light-7: #b4c8d3;
+  --el-color-primary-light-8: #cbd9e1;
+  --el-color-primary-light-9: #e8f0f4;
+  --el-color-primary-dark-2: #264a62;
+
+  color: var(--em-text);
+  background: var(--em-page-bg);
   font-family:
-    Inter, "PingFang SC", "Microsoft YaHei", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    "PingFang SC", "Microsoft YaHei", "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -59,7 +79,11 @@ a {
 .table-band {
   width: 100%;
   padding: 16px;
-  background: #fff;
-  border: 1px solid #e5e7eb;
+  background: var(--em-surface);
+  border: 1px solid var(--em-border);
   border-radius: 8px;
+}
+
+.page-card {
+  border-color: var(--em-border);
 }

@@ -33,6 +33,6 @@ async function goLogin() {
   display: grid;
   min-height: 100vh;
   place-items: center;
-  background: #f5f7fb;
+  background: var(--em-page-bg, #f3f5f8);
 }
 </style>
