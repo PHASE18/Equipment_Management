@@ -24,6 +24,7 @@ public class DataPermissionHandler implements MultiDataPermissionHandler {
             Map.entry("device_ip", DataPermissionRule.viaDevice("device_id")),
             Map.entry("device_project", DataPermissionRule.viaDevice("device_id")),
             Map.entry("device_status_log", DataPermissionRule.viaDevice("device_id")),
+            Map.entry("device_migration_log", DataPermissionRule.viaDevice("device_id")),
             Map.entry("sys_operation_log", DataPermissionRule.viaOperator("operator_id")),
             Map.entry("sys_login_log", DataPermissionRule.loginLog())
     );

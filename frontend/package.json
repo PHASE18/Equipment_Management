@@ -11,7 +11,8 @@
     "test:e2e:project": "playwright test e2e/project.spec.ts",
     "test:e2e:audit": "playwright test e2e/audit-log.spec.ts",
     "test:e2e:attachment": "playwright test e2e/attachment.spec.ts",
-    "test:e2e:statistics": "playwright test e2e/statistics.spec.ts"
+    "test:e2e:statistics": "playwright test e2e/statistics.spec.ts",
+    "test:e2e:migrate": "playwright test e2e/device-migrate.spec.ts"
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.1",

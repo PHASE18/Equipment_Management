@@ -23,9 +23,11 @@ E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\c
 E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\com\equipment\management\config\AsyncConfig.java
 E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\com\equipment\management\service\DictService.java
 E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\com\equipment\management\annotation\IgnoreDataPermission.java
+E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\com\equipment\management\entity\DeviceMigrationItem.java
 E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\com\equipment\management\mapper\DeviceStatusLogMapper.java
 E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\com\equipment\management\common\permission\DataPermissionHandler.java
 E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\com\equipment\management\common\audit\AuditLogServiceImpl.java
+E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\com\equipment\management\dto\response\DeviceMigrationItemResponse.java
 E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\com\equipment\management\service\impl\DeviceMaintenanceServiceImpl.java
 E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\com\equipment\management\config\SecurityConfig.java
 E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\com\equipment\management\service\impl\PermissionServiceImpl.java
@@ -72,6 +74,7 @@ E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\c
 E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\com\equipment\management\mapper\StatisticsMapper.java
 E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\com\equipment\management\controller\SysRoleController.java
 E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\com\equipment\management\dto\request\MaintenanceQuery.java
+E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\com\equipment\management\dto\request\DeviceMigrateRequest.java
 E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\com\equipment\management\service\SysPermissionCrudService.java
 E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\com\equipment\management\config\WebMvcConfig.java
 E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\com\equipment\management\common\enums\DeviceLifecycleStatus.java
@@ -90,12 +93,15 @@ E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\c
 E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\com\equipment\management\common\util\FileUploadValidator.java
 E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\com\equipment\management\common\util\LoginLockManager.java
 E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\com\equipment\management\controller\DeviceMaintenanceController.java
+E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\com\equipment\management\controller\DeviceMigrateController.java
+E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\com\equipment\management\entity\DeviceMigrationLog.java
 E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\com\equipment\management\common\audit\AuditMetadata.java
 E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\com\equipment\management\service\impl\AuthServiceImpl.java
 E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\com\equipment\management\common\service\impl\BaseCrudServiceImpl.java
 E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\com\equipment\management\controller\PermissionController.java
 E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\com\equipment\management\mapper\DeviceIpMapper.java
 E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\com\equipment\management\controller\DeviceController.java
+E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\com\equipment\management\service\impl\DeviceMigrateServiceImpl.java
 E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\com\equipment\management\common\constant\ErrorCode.java
 E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\com\equipment\management\controller\DeviceConfigController.java
 E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\com\equipment\management\dto\response\UserInfoResponse.java
@@ -167,8 +173,11 @@ E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\c
 E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\com\equipment\management\common\exception\GlobalExceptionHandler.java
 E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\com\equipment\management\interceptor\JwtInterceptor.java
 E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\com\equipment\management\common\enums\FileCategory.java
+E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\com\equipment\management\dto\response\DeviceMigrationLogResponse.java
 E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\com\equipment\management\service\impl\ExcelServiceImpl.java
 E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\com\equipment\management\service\DeviceConfigService.java
+E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\com\equipment\management\dto\response\DeviceMigrateResultResponse.java
+E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\com\equipment\management\mapper\DeviceMigrationItemMapper.java
 E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\com\equipment\management\service\impl\DeviceStatusLogServiceImpl.java
 E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\com\equipment\management\entity\SysLoginLog.java
 E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\com\equipment\management\common\permission\DataPermissionScope.java
@@ -176,6 +185,7 @@ E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\c
 E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\com\equipment\management\service\DeviceAttachmentService.java
 E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\com\equipment\management\dto\request\UserRoleRequest.java
 E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\com\equipment\management\controller\DeviceProjectController.java
+E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\com\equipment\management\mapper\DeviceMigrationLogMapper.java
 E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\com\equipment\management\service\impl\SysOperationLogServiceImpl.java
 E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\com\equipment\management\entity\DeviceStatusLog.java
 E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\com\equipment\management\entity\SysUserRole.java
@@ -189,6 +199,7 @@ E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\c
 E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\com\equipment\management\dto\response\FileUploadResponse.java
 E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\com\equipment\management\dto\request\UserQuery.java
 E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\com\equipment\management\config\MybatisMetaObjectHandler.java
+E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\com\equipment\management\service\DeviceMigrateService.java
 E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\com\equipment\management\config\MinioProperties.java
 E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\com\equipment\management\service\SysConfigService.java
 E:\file\cooderr\EquipmentManagement\Equipment_Management\backend\src\main\java\com\equipment\management\config\FileStorageProperties.java

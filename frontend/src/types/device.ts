@@ -19,6 +19,8 @@ export interface Device extends BaseEntity {
   departmentId?: number
   /** 使用部门 */
   useDepartmentId?: number
+  /** 责任人用户ID（数据权限，表单一般不编辑） */
+  managerUserId?: number
   /** 责任人（自由文本） */
   managerName?: string
   /** 使用人 */
@@ -112,6 +114,72 @@ export interface DeviceStatusChangeResult {
   newStatusName?: string
   allowedNextStatuses?: string[]
   history: DeviceStatusLogItem[]
+}
+
+/** 设备迁移请求：前端回填当前值后提交，后端只落库有变更字段。 */
+export interface DeviceMigrateRequest {
+  deviceId: number
+  projectIds?: number[]
+  reason: string
+  remark?: string
+  departmentId?: number
+  useDepartmentId?: number
+  managerUserId?: number
+  managerName?: string
+  useUserName?: string
+  location?: string
+  cabinet?: string
+  businessIp?: string
+  managementIp?: string
+  mask?: string
+  gateway?: string
+  mountedBusiness?: string
+  networkZone?: string
+  mgmtLoginMethod?: string
+  cpu?: string
+  memory?: string
+  disk?: string
+  raid?: string
+  gpu?: string
+  fiberCard?: string
+  nic?: string
+  powerSupply?: string
+  os?: string
+  dbVersion?: string
+  firmware?: string
+  bios?: string
+  configRemark?: string
+}
+
+export interface DeviceMigrationItem {
+  id?: number
+  fieldGroup: string
+  fieldKey: string
+  fieldLabel: string
+  oldValue?: string
+  newValue?: string
+}
+
+export interface DeviceMigrationLog {
+  id: number
+  deviceId: number
+  fromProjectIds?: string
+  toProjectIds?: string
+  fromProjectNames?: string
+  toProjectNames?: string
+  reason: string
+  remark?: string
+  operatorId?: number
+  operatorName?: string
+  migrateTime?: string
+  items?: DeviceMigrationItem[]
+}
+
+export interface DeviceMigrateResult {
+  migrationId: number
+  deviceId: number
+  changedFieldCount: number
+  items: DeviceMigrationItem[]
 }
 
 export const DEVICE_STATUS_OPTIONS: DeviceStatusOption[] = [

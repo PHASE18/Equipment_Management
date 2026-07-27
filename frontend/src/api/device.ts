@@ -6,6 +6,9 @@ import type {
   Device,
   DeviceConfig,
   DeviceIp,
+  DeviceMigrateRequest,
+  DeviceMigrateResult,
+  DeviceMigrationLog,
   DeviceStatusChangeResult,
   DeviceStatusLogItem,
   LifecycleTransitionRequest
@@ -77,6 +80,18 @@ export function listDeviceStatusHistoryApi(deviceId: number) {
 
 export function listAllowedStatusTransitionsApi(deviceId: number) {
   return http.get<string[], string[]>(`/device/status/transitions/${deviceId}`)
+}
+
+export function migrateDeviceApi(data: DeviceMigrateRequest) {
+  return http.post<DeviceMigrateResult, DeviceMigrateResult>('/device/migrate', data)
+}
+
+export function listDeviceMigrationHistoryApi(deviceId: number) {
+  return http.get<DeviceMigrationLog[], DeviceMigrationLog[]>(`/device/migrate/history/${deviceId}`)
+}
+
+export function getDeviceMigrationDetailApi(id: number) {
+  return http.get<DeviceMigrationLog, DeviceMigrationLog>(`/device/migrate/${id}`)
 }
 
 export async function exportDevicesApi(params: DeviceQuery) {

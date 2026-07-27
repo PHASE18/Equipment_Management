@@ -5,6 +5,8 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import AppPagination from '@/components/common/AppPagination.vue'
 import StatusSelect from '@/components/common/StatusSelect.vue'
 import DeviceFormDialog from '@/components/device/DeviceFormDialog.vue'
+import DeviceMigrateDialog from '@/components/device/DeviceMigrateDialog.vue'
+import DeviceMigrateHistoryDialog from '@/components/device/DeviceMigrateHistoryDialog.vue'
 import LifecycleHistoryDialog from '@/components/device/LifecycleHistoryDialog.vue'
 import LifecycleTransitionDialog from '@/components/device/LifecycleTransitionDialog.vue'
 import {
@@ -26,9 +28,13 @@ const departments = ref<SysDepartment[]>([])
 const formVisible = ref(false)
 const lifecycleVisible = ref(false)
 const historyVisible = ref(false)
+const migrateVisible = ref(false)
+const migrateHistoryVisible = ref(false)
 const editingDevice = ref<Device | null>(null)
 const lifecycleDevice = ref<Device | null>(null)
 const historyDevice = ref<Device | null>(null)
+const migrateDevice = ref<Device | null>(null)
+const migrateHistoryDevice = ref<Device | null>(null)
 
 const query = ref({
   pageNum: 1,
@@ -94,6 +100,16 @@ function openHistory(row: Device) {
   historyVisible.value = true
 }
 
+function openMigrate(row: Device) {
+  migrateDevice.value = row
+  migrateVisible.value = true
+}
+
+function openMigrateHistory(row: Device) {
+  migrateHistoryDevice.value = row
+  migrateHistoryVisible.value = true
+}
+
 async function handleDelete(row: Device) {
   await ElMessageBox.confirm(`确定删除设备「${row.deviceName}」吗？`, '提示', { type: 'warning' })
   await deleteDeviceApi(row.id!)
@@ -106,6 +122,10 @@ async function handleLifecycleSuccess(result: DeviceStatusChangeResult) {
   if (row) {
     row.statusCode = result.newStatusCode
   }
+  await loadData()
+}
+
+async function handleMigrateSuccess() {
   await loadData()
 }
 
@@ -136,7 +156,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <el-card shadow="never" class="page-card">
+  <el-card shadow="never" class="page-card" data-testid="device-page">
     <template #header>
       <div class="card-header">
         <span>设备档案</span>
@@ -177,7 +197,7 @@ onMounted(async () => {
       </el-form-item>
     </el-form>
 
-    <el-table v-loading="loading" :data="tableData" stripe border>
+    <el-table v-loading="loading" :data="tableData" stripe border data-testid="device-table">
       <el-table-column prop="deviceNo" label="设备编号" min-width="130" fixed="left" />
       <el-table-column prop="deviceName" label="设备名称" min-width="150" show-overflow-tooltip />
       <el-table-column prop="sn" label="SN号" min-width="130" show-overflow-tooltip />
@@ -197,10 +217,28 @@ onMounted(async () => {
       </el-table-column>
       <el-table-column prop="location" label="所在机房" min-width="140" show-overflow-tooltip />
       <el-table-column prop="createTime" label="创建时间" min-width="170" />
-      <el-table-column label="操作" width="280" fixed="right">
+      <el-table-column label="操作" width="360" fixed="right">
         <template #default="{ row }">
-          <el-button v-permission="'device:view'" link type="primary" @click="openHistory(row)">历史</el-button>
+          <el-button v-permission="'device:view'" link type="primary" @click="openHistory(row)">流转史</el-button>
+          <el-button
+            v-permission="'device:view'"
+            link
+            type="primary"
+            :data-testid="`device-migrate-history-${row.id}`"
+            @click="openMigrateHistory(row)"
+          >
+            迁移史
+          </el-button>
           <el-button v-permission="'device:edit'" link type="primary" @click="openEdit(row)">编辑</el-button>
+          <el-button
+            v-permission="'device:edit'"
+            link
+            type="success"
+            :data-testid="`device-migrate-${row.id}`"
+            @click="openMigrate(row)"
+          >
+            迁移
+          </el-button>
           <el-button v-permission="'device:edit'" link type="warning" @click="openLifecycle(row)">流转</el-button>
           <el-button v-permission="'device:delete'" link type="danger" @click="handleDelete(row)">删除</el-button>
         </template>
@@ -224,6 +262,14 @@ onMounted(async () => {
   />
 
   <LifecycleHistoryDialog v-model="historyVisible" :device="historyDevice" />
+
+  <DeviceMigrateDialog
+    v-model="migrateVisible"
+    :device="migrateDevice"
+    @success="handleMigrateSuccess"
+  />
+
+  <DeviceMigrateHistoryDialog v-model="migrateHistoryVisible" :device="migrateHistoryDevice" />
 </template>
 
 <style scoped>
