@@ -75,6 +75,7 @@ const emptyDevice = (): Device => ({
   warrantyEnd: '',
   scrapDate: '',
   statusCode: 'PURCHASING',
+  maintainingFlag: 0,
   cabinet: '',
   location: '',
   remark: ''
@@ -380,7 +381,7 @@ function handleFinish() {
             </el-col>
             <el-col :span="12">
               <el-form-item label="设备状态" prop="statusCode">
-                <StatusSelect v-model="form.statusCode" style="width: 100%" />
+                <StatusSelect v-model="form.statusCode" mode="main" style="width: 100%" />
               </el-form-item>
             </el-col>
             <el-col :span="12">

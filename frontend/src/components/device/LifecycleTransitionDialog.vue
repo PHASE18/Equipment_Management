@@ -6,7 +6,7 @@ import StatusSelect from '@/components/common/StatusSelect.vue'
 import LifecycleHistoryTimeline from '@/components/device/LifecycleHistoryTimeline.vue'
 import { changeDeviceStatusApi, listAllowedStatusTransitionsApi } from '@/api/device'
 import type { Device, DeviceStatusChangeResult } from '@/types/device'
-import { getDeviceStatusLabel } from '@/types/device'
+import { getDeviceDisplayStatusLabel, getDeviceStatusLabel } from '@/types/device'
 
 const visible = defineModel<boolean>({ required: true })
 
@@ -101,7 +101,9 @@ function handleClose() {
           <span>{{ device?.deviceName }} / {{ device?.deviceNo }}</span>
         </el-form-item>
         <el-form-item label="当前状态">
-          <StatusSelect :model-value="device?.statusCode" disabled />
+          <el-tag type="info" size="small">
+            {{ getDeviceDisplayStatusLabel(device?.statusCode, device?.maintainingFlag) }}
+          </el-tag>
         </el-form-item>
         <el-form-item label="目标状态" prop="toStatus">
           <StatusSelect

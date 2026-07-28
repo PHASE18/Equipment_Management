@@ -43,6 +43,8 @@ public class Device extends BaseEntity {
     private LocalDate warrantyEnd;
     private LocalDate scrapDate;
     private String statusCode;
+    /** 是否维修中：0-否 1-是（可与在用/停用并存） */
+    private Integer maintainingFlag;
     /** 机柜U位 */
     private String cabinet;
     /** 所在机房 */

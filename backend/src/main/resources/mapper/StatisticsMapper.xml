@@ -73,7 +73,7 @@
         SELECT
             COUNT(*) AS deviceTotal,
             SUM(CASE WHEN d.status_code = 'IN_USE' THEN 1 ELSE 0 END) AS inUseCount,
-            SUM(CASE WHEN d.status_code = 'MAINTAINING' THEN 1 ELSE 0 END) AS maintainingCount,
+            SUM(CASE WHEN d.maintaining_flag = 1 THEN 1 ELSE 0 END) AS maintainingCount,
             SUM(CASE WHEN d.status_code = 'STOPPED' THEN 1 ELSE 0 END) AS stoppedCount,
             SUM(CASE WHEN d.status_code = 'SCRAPPED' THEN 1 ELSE 0 END) AS scrappedCount,
             SUM(CASE WHEN d.warranty_end BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 30 DAY) THEN 1 ELSE 0 END) AS warrantyExpiringCount,

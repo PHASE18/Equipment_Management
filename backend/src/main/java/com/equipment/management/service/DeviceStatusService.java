@@ -19,4 +19,10 @@ public interface DeviceStatusService {
     List<String> allowedNextStatuses(Long deviceId);
 
     DeviceStatusChangeResponse changeStatus(DeviceStatusChangeRequest request);
+
+    /**
+     * 方案 A：设置/清除维修标志（不改变主状态）。
+     * @return true 表示标志确有变化并已落库
+     */
+    boolean setMaintainingFlag(Long deviceId, boolean maintaining, String reason, String remark);
 }

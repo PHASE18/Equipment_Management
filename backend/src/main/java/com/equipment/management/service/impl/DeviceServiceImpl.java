@@ -24,8 +24,15 @@ public class DeviceServiceImpl extends BaseCrudServiceImpl<DeviceMapper, Device>
                 .like(StringUtils.hasText(query.getDeviceName()), Device::getDeviceName, query.getDeviceName())
                 .eq(StringUtils.hasText(query.getBrand()), Device::getBrandCode, query.getBrand())
                 .like(StringUtils.hasText(query.getModel()), Device::getModel, query.getModel())
-                .eq(StringUtils.hasText(query.getStatus()), Device::getStatusCode, query.getStatus())
                 .eq(query.getDepartmentId() != null, Device::getDepartmentId, query.getDepartmentId());
+        if (StringUtils.hasText(query.getStatus())) {
+            // 筛选「维修中」按维修标志；其余按主状态
+            if ("MAINTAINING".equals(query.getStatus())) {
+                wrapper.eq(Device::getMaintainingFlag, 1);
+            } else {
+                wrapper.eq(Device::getStatusCode, query.getStatus());
+            }
+        }
         if (StringUtils.hasText(query.getKeyword())) {
             wrapper.and(w -> w.like(Device::getDeviceNo, query.getKeyword())
                     .or().like(Device::getDeviceName, query.getKeyword())
@@ -37,6 +44,9 @@ public class DeviceServiceImpl extends BaseCrudServiceImpl<DeviceMapper, Device>
     @Override
     public void createEntity(Device entity) {
         validateUnique(entity, null);
+        if (entity.getMaintainingFlag() == null) {
+            entity.setMaintainingFlag(0);
+        }
         super.createEntity(entity);
     }
 

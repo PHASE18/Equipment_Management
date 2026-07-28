@@ -4,10 +4,10 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.equipment.management.common.constant.ErrorCode;
+import com.equipment.management.common.enums.DeviceLifecycleStatus;
 import com.equipment.management.common.exception.BusinessException;
 import com.equipment.management.common.result.PageResult;
 import com.equipment.management.common.util.PageUtils;
-import com.equipment.management.dto.request.DeviceStatusChangeRequest;
 import com.equipment.management.dto.request.MaintenanceQuery;
 import com.equipment.management.dto.response.FaultTypeStatResponse;
 import com.equipment.management.dto.response.FileUploadResponse;
@@ -41,9 +41,6 @@ import java.util.stream.Collectors;
 public class DeviceMaintenanceServiceImpl extends BaseCrudServiceImpl<DeviceMaintenanceMapper, DeviceMaintenance>
         implements DeviceMaintenanceService {
 
-    private static final String STATUS_IN_USE = "IN_USE";
-    private static final String STATUS_MAINTAINING = "MAINTAINING";
-
     private final DeviceMapper deviceMapper;
     private final DeviceStatusService deviceStatusService;
     private final DictService dictService;
@@ -67,14 +64,22 @@ public class DeviceMaintenanceServiceImpl extends BaseCrudServiceImpl<DeviceMain
     @Transactional(rollbackFor = Exception.class)
     public void createMaintenance(DeviceMaintenance entity) {
         validateMaintenance(entity);
-        ensureDeviceExists(entity.getDeviceId());
+        Device device = deviceMapper.selectById(entity.getDeviceId());
+        if (device == null) {
+            throw new BusinessException(ErrorCode.DEVICE_NOT_FOUND);
+        }
+        if (!DeviceLifecycleStatus.canEnterMaintenance(device.getStatusCode())) {
+            throw new BusinessException(ErrorCode.BAD_REQUEST,
+                    "仅「在用」或「停用（机柜）」设备可创建维修工单，当前："
+                            + DeviceLifecycleStatus.displayLabel(device.getStatusCode(), device.getMaintainingFlag()));
+        }
         if (entity.getIsResolved() == null) {
             entity.setIsResolved(0);
         }
         entity.setId(null);
         save(entity);
         syncAttachmentPath(entity.getId());
-        transitionDeviceToMaintaining(entity.getDeviceId());
+        markDeviceMaintaining(device.getId());
     }
 
     @Override
@@ -86,7 +91,7 @@ public class DeviceMaintenanceServiceImpl extends BaseCrudServiceImpl<DeviceMain
         updateById(entity);
         syncAttachmentPath(entity.getId());
         if (Objects.equals(existing.getIsResolved(), 0) && Objects.equals(entity.getIsResolved(), 1)) {
-            recoverDevice(entity.getDeviceId(), entity.getRecoverDate());
+            clearMaintainingIfNoOpenTickets(entity.getDeviceId(), entity.getRecoverDate());
         }
     }
 
@@ -102,7 +107,7 @@ public class DeviceMaintenanceServiceImpl extends BaseCrudServiceImpl<DeviceMain
             maintenance.setRecoverDate(LocalDate.now());
         }
         updateById(maintenance);
-        recoverDevice(maintenance.getDeviceId(), maintenance.getRecoverDate());
+        clearMaintainingIfNoOpenTickets(maintenance.getDeviceId(), maintenance.getRecoverDate());
     }
 
     @Override
@@ -167,32 +172,23 @@ public class DeviceMaintenanceServiceImpl extends BaseCrudServiceImpl<DeviceMain
         }
     }
 
-    private void transitionDeviceToMaintaining(Long deviceId) {
-        Device device = deviceMapper.selectById(deviceId);
-        if (device == null || !STATUS_IN_USE.equals(device.getStatusCode())) {
-            return;
-        }
-        DeviceStatusChangeRequest request = new DeviceStatusChangeRequest();
-        request.setDeviceId(deviceId);
-        request.setFromStatus(device.getStatusCode());
-        request.setToStatus(STATUS_MAINTAINING);
-        request.setReason("新增维修工单，设备进入维修中");
-        request.setRemark("系统自动流转");
-        deviceStatusService.changeStatus(request);
+    private void markDeviceMaintaining(Long deviceId) {
+        deviceStatusService.setMaintainingFlag(
+                deviceId,
+                true,
+                "新增维修工单，设备进入维修中",
+                "系统自动标记维修标志（主状态不变）");
     }
 
-    private void recoverDevice(Long deviceId, LocalDate recoverDate) {
-        Device device = deviceMapper.selectById(deviceId);
-        if (device == null || !STATUS_MAINTAINING.equals(device.getStatusCode())) {
+    private void clearMaintainingIfNoOpenTickets(Long deviceId, LocalDate recoverDate) {
+        long openCount = count(Wrappers.<DeviceMaintenance>lambdaQuery()
+                .eq(DeviceMaintenance::getDeviceId, deviceId)
+                .eq(DeviceMaintenance::getIsResolved, 0));
+        if (openCount > 0) {
             return;
         }
-        DeviceStatusChangeRequest request = new DeviceStatusChangeRequest();
-        request.setDeviceId(deviceId);
-        request.setFromStatus(device.getStatusCode());
-        request.setToStatus(STATUS_IN_USE);
-        request.setReason("维修完成恢复使用");
-        request.setRemark(recoverDate != null ? "恢复日期：" + recoverDate : "系统自动流转");
-        deviceStatusService.changeStatus(request);
+        String remark = recoverDate != null ? "恢复日期：" + recoverDate : "系统自动清除维修标志";
+        deviceStatusService.setMaintainingFlag(deviceId, false, "维修完成退出维修中", remark);
     }
 
     private void syncAttachmentPath(Long maintenanceId) {

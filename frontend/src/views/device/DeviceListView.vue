@@ -18,7 +18,7 @@ import { optionsApi } from '@/api/options'
 import { buildDepartmentTreeOptions, findDepartmentName } from '@/api/system'
 import type { SysDepartment } from '@/types/system'
 import type { Device, DeviceStatusChangeResult } from '@/types/device'
-import { getDeviceStatusLabel, getDeviceStatusType } from '@/types/device'
+import { getDeviceDisplayStatusLabel, getDeviceDisplayStatusType } from '@/types/device'
 
 const loading = ref(false)
 const exporting = ref(false)
@@ -87,7 +87,7 @@ function openCreate() {
 
 function openEdit(row: Device) {
   editingDevice.value = { ...row }
-  formVisible.value = true
+  formVisible.value = true //弹窗编辑设备
 }
 
 function openLifecycle(row: Device) {
@@ -121,6 +121,9 @@ async function handleLifecycleSuccess(result: DeviceStatusChangeResult) {
   const row = tableData.value.find(item => item.id === result.deviceId)
   if (row) {
     row.statusCode = result.newStatusCode
+    if (result.maintainingFlag !== undefined) {
+      row.maintainingFlag = result.maintainingFlag
+    }
   }
   await loadData()
 }
@@ -210,8 +213,8 @@ onMounted(async () => {
       </el-table-column>
       <el-table-column label="状态" width="100">
         <template #default="{ row }">
-          <el-tag :type="getDeviceStatusType(row.statusCode)" size="small">
-            {{ getDeviceStatusLabel(row.statusCode) }}
+          <el-tag :type="getDeviceDisplayStatusType(row.statusCode, row.maintainingFlag)" size="small">
+            {{ getDeviceDisplayStatusLabel(row.statusCode, row.maintainingFlag) }}
           </el-tag>
         </template>
       </el-table-column>

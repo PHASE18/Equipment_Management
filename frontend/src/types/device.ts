@@ -36,6 +36,8 @@ export interface Device extends BaseEntity {
   warrantyEnd?: string
   scrapDate?: string
   statusCode: string
+  /** 是否维修中：0-否 1-是（可与在用/停用并存） */
+  maintainingFlag?: number
   /** 机柜U位 */
   cabinet?: string
   /** 所在机房 */
@@ -112,6 +114,7 @@ export interface DeviceStatusChangeResult {
   oldStatusName?: string
   newStatusCode: string
   newStatusName?: string
+  maintainingFlag?: number
   allowedNextStatuses?: string[]
   history: DeviceStatusLogItem[]
 }
@@ -188,10 +191,15 @@ export const DEVICE_STATUS_OPTIONS: DeviceStatusOption[] = [
   { label: '待上架', value: 'PENDING_ONLINE', type: 'warning' },
   { label: '在用', value: 'IN_USE', type: 'success' },
   { label: '维修中', value: 'MAINTAINING', type: 'warning' },
-  { label: '备用', value: 'STANDBY', type: 'info' },
   { label: '停用', value: 'STOPPED', type: 'info' },
+  { label: '下架', value: 'OFFLINE', type: 'warning' },
   { label: '报废', value: 'SCRAPPED', type: 'danger' }
 ]
+
+/** 设备表单可选主状态（不含「维修中」筛选伪码；维修由工单维护标志） */
+export const DEVICE_MAIN_STATUS_OPTIONS: DeviceStatusOption[] = DEVICE_STATUS_OPTIONS.filter(
+  item => item.value !== 'MAINTAINING'
+)
 
 export const MGMT_LOGIN_METHOD_OPTIONS = ['SSH', 'HTTPS', 'HTTP', 'IPMI', 'iDRAC', 'iLO', 'RDP', 'Telnet']
 
@@ -201,4 +209,28 @@ export function getDeviceStatusLabel(code?: string) {
 
 export function getDeviceStatusType(code?: string): DeviceStatusOption['type'] {
   return DEVICE_STATUS_OPTIONS.find(item => item.value === code)?.type || 'info'
+}
+
+/** 主状态 + 维修标志同时展示（方案 A） */
+export function getDeviceDisplayStatusLabel(code?: string, maintainingFlag?: number) {
+  const maintaining = maintainingFlag === 1
+  if (!maintaining) {
+    return getDeviceStatusLabel(code)
+  }
+  if (code === 'IN_USE') {
+    return '维修中/在用'
+  }
+  if (code === 'STOPPED') {
+    return '维修中/停用'
+  }
+  return `${getDeviceStatusLabel(code)}（维修中）`
+}
+
+export function getDeviceDisplayStatusType(code?: string, maintainingFlag?: number): DeviceStatusOption['type'] {
+  if (maintainingFlag === 1) {
+    if (code === 'IN_USE') return 'success'
+    if (code === 'STOPPED') return 'info'
+    return 'warning'
+  }
+  return getDeviceStatusType(code)
 }

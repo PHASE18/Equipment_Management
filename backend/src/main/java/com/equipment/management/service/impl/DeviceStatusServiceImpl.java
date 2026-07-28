@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-/** 设备生命周期状态迁移服务实现。 */
+/** 设备生命周期状态迁移服务实现（方案 A：主状态 + 维修标志）。 */
 public class DeviceStatusServiceImpl implements DeviceStatusService {
 
     private final DeviceMapper deviceMapper;
@@ -69,6 +69,7 @@ public class DeviceStatusServiceImpl implements DeviceStatusService {
     public DeviceStatusChangeResponse changeStatus(DeviceStatusChangeRequest request) {
         Device device = getDeviceOrThrow(request.getDeviceId());
         String oldStatus = device.getStatusCode();
+        Integer oldFlag = device.getMaintainingFlag() == null ? 0 : device.getMaintainingFlag();
         String newStatus = request.resolveTargetStatus();
 
         if (!StringUtils.hasText(newStatus)) {
@@ -87,28 +88,68 @@ public class DeviceStatusServiceImpl implements DeviceStatusService {
         }
 
         device.setStatusCode(newStatus);
+        if (DeviceLifecycleStatus.shouldClearMaintainingFlag(newStatus)) {
+            device.setMaintainingFlag(0);
+        }
         deviceMapper.updateById(device);
 
-        DeviceStatusLog statusLog = new DeviceStatusLog();
-        statusLog.setDeviceId(device.getId());
-        statusLog.setOldStatusCode(oldStatus);
-        statusLog.setNewStatusCode(newStatus);
-        statusLog.setChangeReason(request.getReason());
-        statusLog.setRemark(request.getRemark());
-        statusLog.setOperatorId(UserContext.getUserId());
-        statusLog.setChangeTime(LocalDateTime.now());
-        deviceStatusLogMapper.insert(statusLog);
+        insertStatusLog(device.getId(), oldStatus, newStatus, request.getReason(), request.getRemark());
 
+        Integer newFlag = device.getMaintainingFlag() == null ? 0 : device.getMaintainingFlag();
         List<DeviceStatusLogResponse> history = listHistory(device.getId());
         return DeviceStatusChangeResponse.builder()
                 .deviceId(device.getId())
                 .oldStatusCode(oldStatus)
-                .oldStatusName(DeviceLifecycleStatus.labelOf(oldStatus))
+                .oldStatusName(DeviceLifecycleStatus.displayLabel(oldStatus, oldFlag))
                 .newStatusCode(newStatus)
-                .newStatusName(DeviceLifecycleStatus.labelOf(newStatus))
+                .newStatusName(DeviceLifecycleStatus.displayLabel(newStatus, newFlag))
+                .maintainingFlag(newFlag)
                 .allowedNextStatuses(DeviceLifecycleStatus.allowedNextStatuses(newStatus))
                 .history(history)
                 .build();
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public boolean setMaintainingFlag(Long deviceId, boolean maintaining, String reason, String remark) {
+        Device device = getDeviceOrThrow(deviceId);
+        int current = device.getMaintainingFlag() == null ? 0 : device.getMaintainingFlag();
+        int target = maintaining ? 1 : 0;
+        if (current == target) {
+            return false;
+        }
+        if (maintaining && !DeviceLifecycleStatus.canEnterMaintenance(device.getStatusCode())) {
+            throw new BusinessException(ErrorCode.BAD_REQUEST,
+                    "仅「在用」或「停用（机柜）」设备可进入维修，当前状态："
+                            + DeviceLifecycleStatus.labelOf(device.getStatusCode()));
+        }
+
+        device.setMaintainingFlag(target);
+        deviceMapper.updateById(device);
+
+        String status = device.getStatusCode();
+        String fromLabel = DeviceLifecycleStatus.displayLabel(status, current);
+        String toLabel = DeviceLifecycleStatus.displayLabel(status, target);
+        String logReason = StringUtils.hasText(reason)
+                ? reason
+                : (maintaining ? "进入维修" : "退出维修");
+        String logRemark = StringUtils.hasText(remark)
+                ? remark
+                : (fromLabel + " → " + toLabel);
+        insertStatusLog(deviceId, status, status, logReason, logRemark);
+        return true;
+    }
+
+    private void insertStatusLog(Long deviceId, String oldStatus, String newStatus, String reason, String remark) {
+        DeviceStatusLog statusLog = new DeviceStatusLog();
+        statusLog.setDeviceId(deviceId);
+        statusLog.setOldStatusCode(oldStatus);
+        statusLog.setNewStatusCode(newStatus);
+        statusLog.setChangeReason(reason);
+        statusLog.setRemark(remark);
+        statusLog.setOperatorId(UserContext.getUserId());
+        statusLog.setChangeTime(LocalDateTime.now());
+        deviceStatusLogMapper.insert(statusLog);
     }
 
     private Device getDeviceOrThrow(Long deviceId) {
