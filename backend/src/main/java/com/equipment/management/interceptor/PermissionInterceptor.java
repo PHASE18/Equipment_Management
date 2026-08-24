@@ -17,26 +17,26 @@ import org.springframework.web.servlet.HandlerInterceptor;
 /** 根据控制器权限注解和当前用户权限判断接口是否允许执行。 */
 public class PermissionInterceptor implements HandlerInterceptor {
 
-    private final PermissionChecker permissionChecker;
+    private final PermissionChecker permissionChecker; // 权限检查器
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
-        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) { // 如果请求方法为 OPTIONS，则直接返回 true
             return true;
         }
-        if (!(handler instanceof HandlerMethod handlerMethod)) {
+        if (!(handler instanceof HandlerMethod handlerMethod)) { // 如果 handler 不是 HandlerMethod，则直接返回 true
             return true;
         }
-        if (isAnonymous(handlerMethod)) {
+        if (isAnonymous(handlerMethod)) { // 如果方法上标注了 Anonymous 注解，则直接返回 true
             return true;
         }
 
-        String[] requiredPermissions = resolveRequiredPermissions(handlerMethod, request.getMethod());
+        String[] requiredPermissions = resolveRequiredPermissions(handlerMethod, request.getMethod()); // 解析需要的权限
         if (requiredPermissions.length == 0) {
             return true;
         }
 
-        permissionChecker.check(requiredPermissions);
+        permissionChecker.check(requiredPermissions); // 检查权限
         return true;
     }
 

@@ -22,33 +22,33 @@ public class PermissionChecker {
 
     private final PermissionService permissionService;
 
-    public void check(String... requiredPermissions) {
+    public void check(String... requiredPermissions) { // 检查权限
         if (requiredPermissions == null || requiredPermissions.length == 0) {
             return;
         }
 
-        UserContext.LoginUser user = UserContext.get();
+        UserContext.LoginUser user = UserContext.get();// 获取当前用户
         if (user == null) {
             throw new BusinessException(ErrorCode.UNAUTHORIZED);
         }
-        if (isSuperRole(user)) {
+        if (isSuperRole(user)) { // 如果当前用户是超级管理员，则直接返回
             return;
         }
 
-        Set<String> ownedPermissions = resolvePermissions(user);
-        boolean allowed = Arrays.stream(requiredPermissions)
+        Set<String> ownedPermissions = resolvePermissions(user); // 获取当前用户的权限
+        boolean allowed = Arrays.stream(requiredPermissions) // 检查权限是否匹配
                 .filter(StringUtils::hasText)
-                .anyMatch(ownedPermissions::contains);
+                .anyMatch(ownedPermissions::contains); // 如果权限匹配，则直接返回
         if (!allowed) {
-            throw new BusinessException(ErrorCode.PERMISSION_DENIED);
+            throw new BusinessException(ErrorCode.PERMISSION_DENIED); // 如果权限不匹配，则抛出异常
         }
     }
 
-    public boolean hasPermission(String permissionCode) {
-        if (!StringUtils.hasText(permissionCode)) {
+    public boolean hasPermission(String permissionCode) { // 检查权限
+        if (!StringUtils.hasText(permissionCode)) { // 如果权限码为空，则直接返回 true
             return true;
         }
-        UserContext.LoginUser user = UserContext.get();
+        UserContext.LoginUser user = UserContext.get(); // 获取当前用户
         if (user == null) {
             return false;
         }
@@ -58,14 +58,14 @@ public class PermissionChecker {
         return resolvePermissions(user).contains(permissionCode);
     }
 
-    private Set<String> resolvePermissions(UserContext.LoginUser user) {
+    private Set<String> resolvePermissions(UserContext.LoginUser user) { // 获取当前用户的权限
         if (user.getPermissionCodes() != null && !user.getPermissionCodes().isEmpty()) {
             return user.getPermissionCodes();
         }
         return Set.copyOf(permissionService.getUserPermissionCodes(user.getUserId()));
     }
 
-    private boolean isSuperRole(UserContext.LoginUser user) {
+    private boolean isSuperRole(UserContext.LoginUser user) { // 检查当前用户是否是超级管理员
         if (user.getRoleCodes() == null || user.getRoleCodes().isEmpty()) {
             return false;
         }

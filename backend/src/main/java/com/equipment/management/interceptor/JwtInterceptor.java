@@ -28,8 +28,8 @@ import java.util.Set;
 /** 从请求头解析 JWT 并将登录用户写入请求上下文的拦截器。 */
 public class JwtInterceptor implements HandlerInterceptor {
 
-    private static final String AUTH_HEADER = "Authorization";
-    private static final String BEARER_PREFIX = "Bearer ";
+    private static final String AUTH_HEADER = "Authorization"; // 请求头中的 Authorization 字段
+    private static final String BEARER_PREFIX = "Bearer "; // Bearer 前缀
 
     private final JwtUtils jwtUtils;
     private final PermissionService permissionService;
@@ -45,16 +45,16 @@ public class JwtInterceptor implements HandlerInterceptor {
         }
 
         String token = resolveToken(request);
-        if (!StringUtils.hasText(token)) {
+        if (!StringUtils.hasText(token)) { // 如果请求头中没有 Authorization 字段或 Authorization 字段不以 Bearer 前缀开头，则抛出异常
             throw new BusinessException(ErrorCode.UNAUTHORIZED);
         }
 
         try {
-            Claims claims = allowExpiredToken(handler)
-                    ? jwtUtils.parseTokenAllowExpired(token)
-                    : jwtUtils.parseToken(token);
-            UserContext.LoginUser loginUser = jwtUtils.toLoginUser(claims);
-            loginUser.setPermissionCodes(Set.copyOf(permissionService.getUserPermissionCodes(loginUser.getUserId())));
+            Claims claims = allowExpiredToken(handler) // 如果方法上标注了 AllowExpiredToken 注解，则允许过期 token
+                    ? jwtUtils.parseTokenAllowExpired(token) // 解析过期 token
+                    : jwtUtils.parseToken(token); // 解析 token
+            UserContext.LoginUser loginUser = jwtUtils.toLoginUser(claims); // 将 token 解析为登录用户
+            loginUser.setPermissionCodes(Set.copyOf(permissionService.getUserPermissionCodes(loginUser.getUserId()))); // 设置登录用户的权限码
             UserContext.set(loginUser);
             return true;
         } catch (ExpiredJwtException e) {

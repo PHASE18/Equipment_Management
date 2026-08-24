@@ -16,7 +16,7 @@ public class MybatisPlusConfig {
     private final DataPermissionHandler dataPermissionHandler;
 
     @Bean
-    public MybatisPlusInterceptor mybatisPlusInterceptor() {
+    public MybatisPlusInterceptor mybatisPlusInterceptor() { // 配置 MyBatis-Plus 拦截器
         MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
         interceptor.addInnerInterceptor(new DataPermissionInterceptor(dataPermissionHandler));
         interceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.MYSQL));

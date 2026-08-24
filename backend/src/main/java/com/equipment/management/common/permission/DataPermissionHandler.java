@@ -14,8 +14,8 @@ import java.util.Map;
 /** 将当前用户数据范围转换为 SQL 条件的 MyBatis-Plus 权限处理器。 */
 public class DataPermissionHandler implements MultiDataPermissionHandler {
 
-    private static final Map<String, DataPermissionRule> TABLE_RULES = Map.ofEntries(
-            Map.entry("device", DataPermissionRule.direct("department_id", "manager_user_id")),
+    private static final Map<String, DataPermissionRule> TABLE_RULES = Map.ofEntries(// 表规则
+            Map.entry("device", DataPermissionRule.direct("department_id", "manager_user_id")),// 设备表
             Map.entry("project", DataPermissionRule.direct("department_id", null)),
             Map.entry("sys_user", DataPermissionRule.direct("department_id", "id")),
             Map.entry("device_maintenance", DataPermissionRule.viaDevice("device_id")),
